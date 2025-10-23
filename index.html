@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Aderência Cultura - Brasil Infra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --brasil-blue: #2B4366;
+            --brasil-blue-dark: #1a2d47;
+            --brasil-yellow: #EDD730;
+            --brasil-yellow-light: #FFF9E6;
+            --text-dark: #1a202c;
+            --text-gray: #4a5568;
+        }
+        
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* HEADER - ESTILO BRASIL INFRA PROFISSIONAL */
+        .main-header {
+            background: linear-gradient(135deg, #1a2d47 0%, #2B4366 50%, #3a5580 100%);
+            padding: 50px 30px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        
+        .main-header::before {
+            content: '🏗️';
+            position: absolute;
+            right: -50px;
+            bottom: -50px;
+            font-size: 250px;
+            opacity: 0.08;
+            transform: rotate(-15deg);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+        
+        .main-title {
+            color: #EDD730;
+            font-size: 48px;
+            margin-bottom: 15px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .main-subtitle {
+            color: white;
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .main-tagline {
+            color: #EDD730;
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 15px;
+            opacity: 0.95;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* CONTAINER */
+        .content-container {
+            max-width: 800px;
+            margin: 30px auto 40px;
+            padding: 0 20px;
+        }
+        
+        /* CARD */
+        .white-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+        
+        /* INSTRUCTION BOX */
+        .instruction-box {
+            background: #FFF9E6;
+            border: 2px solid #fef3c7;
+            border-left: 4px solid #2B4366;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        
+        #minWordsAlert {
+            transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .instruction-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2B4366;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instruction-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #2B4366;
+        }
+        
+        /* FORM */
+        .form-group {
+            margin-bottom: 28px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2B4366;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2B4366;
+            box-shadow: 0 0 0 3px rgba(43, 67, 102, 0.1);
+        }
+        
+        /* PRIVACY BOX */
+        .privacy-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .privacy-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .privacy-box::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        .privacy-box::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+        
+        .privacy-box::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        
+        .privacy-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2B4366;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .privacy-section {
+            margin-bottom: 16px;
+        }
+        
+        .privacy-section-title {
+            font-weight: 600;
+            color: #2B4366;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        
+        .privacy-section-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-gray);
+        }
+        
+        /* CHECKBOX */
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+            margin-bottom: 24px;
+        }
+        
+        .checkbox-container:hover {
+            background: #f8fafc;
+        }
+        
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+        
+        .custom-checkbox.checked {
+            background: #2B4366;
+            border-color: #2B4366;
+        }
+        
+        .custom-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .checkbox-label {
+            font-size: 14px;
+            color: #2B4366;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        
+        /* BUTTON */
+        .btn-start {
+            width: 100%;
+            background: linear-gradient(135deg, #EDD730 0%, #F5E04D 100%);
+            color: #1a2d47;
+            padding: 18px 36px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 17px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(237, 215, 48, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(237, 215, 48, 0.4);
+            background: linear-gradient(135deg, #F5E04D 0%, #EDD730 100%);
+        }
+        
+        .btn-start:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* WORDS GRID */
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 24px 0;
+        }
+        
+        .word-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            min-height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: border-color, background, box-shadow;
+        }
+        
+        .word-item:hover:not(.selected) {
+            border-color: #2B4366;
+            box-shadow: 0 2px 8px rgba(43, 67, 102, 0.15);
+        }
+        
+        .word-item.selected {
+            border-color: #2B4366;
+            border-width: 3px;
+            background: linear-gradient(135deg, #e6f2ff 0%, #FFF9E6 100%);
+            box-shadow: 0 4px 12px rgba(43, 67, 102, 0.2);
+        }
+        
+        .word-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .word-item.selected .word-text {
+            color: #2B4366;
+        }
+        
+        .word-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            background: #2B4366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .word-item.selected .word-check {
+            opacity: 1;
+        }
+        
+        /* PROGRESS */
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 100px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2B4366 0%, #EDD730 100%);
+            transition: width 0.3s ease;
+        }
+        
+        /* COUNTER */
+        .counter-badge {
+            background: linear-gradient(135deg, #EDD730 0%, #F5E04D 100%);
+            color: #1a2d47;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(237, 215, 48, 0.3);
+            transition: all 0.3s ease;
+            min-width: 70px;
+            text-align: center;
+        }
+        
+        /* RESULTS */
+        .result-header {
+            background: linear-gradient(135deg, #4a6fa5 0%, #5a7fb5 100%);
+            padding: 50px 40px;
+            border-radius: 16px 16px 0 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .overall-score {
+            font-size: 88px;
+            font-weight: 900;
+            line-height: 1;
+            margin: 20px 0;
+        }
+        
+        .adherence-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 12px;
+        }
+        
+        .value-card {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 20px;
+            border-left: 6px solid;
+        }
+        
+        .value-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .value-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .value-description {
+            font-size: 14px;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+        
+        .value-percentage {
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        .value-status-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        
+        .status-desenvolvimento {
+            background: #FFA500;
+            color: white;
+        }
+        
+        .status-adequado {
+            background: #9B9B9B;
+            color: white;
+        }
+        
+        .value-progress-bar {
+            width: 100%;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 100px;
+            overflow: hidden;
+            margin: 24px 0;
+        }
+        
+        .value-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #EDD730 0%, #F5E04D 100%);
+            border-radius: 100px;
+            transition: width 0.5s ease;
+        }
+        
+        .improvement-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        
+        .improvement-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2B4366;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .improvement-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .improvement-list li {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #374151;
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .improvement-list li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            color: #2B4366;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #2B4366;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 40px 20px;
+                min-height: 200px;
+            }
+            .main-header::before {
+                font-size: 180px;
+                right: -30px;
+                bottom: -30px;
+            }
+            .main-title { 
+                font-size: 32px;
+                letter-spacing: 1px;
+                margin-bottom: 12px;
+            }
+            .main-subtitle { 
+                font-size: 18px;
+                margin-top: 8px;
+            }
+            .main-tagline {
+                font-size: 15px;
+                margin-top: 12px;
+            }
+            .white-card { 
+                padding: 24px; 
+            }
+            .words-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            .overall-score { 
+                font-size: 64px; 
+            }
+            .value-percentage { 
+                font-size: 40px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mgvnjyzb';
+        const RH_EMAIL = 'rhbrasilinfra@gmail.com';
+        
+        const words = [
+            { word: 'Responsável', value: 'comprometimento', positive: true },
+            { word: 'Confiável', value: 'comprometimento', positive: true },
+            { word: 'Dedicado', value: 'comprometimento', positive: true },
+            { word: 'Pontual', value: 'comprometimento', positive: true },
+            { word: 'Leal', value: 'comprometimento', positive: true },
+            { word: 'Persistente', value: 'comprometimento', positive: true },
+            { word: 'Palavra é palavra', value: 'comprometimento', positive: true },
+            { word: 'Teimoso', value: 'comprometimento', positive: false },
+            { word: 'Inflexível', value: 'comprometimento', positive: false },
+            { word: 'Centralizador', value: 'comprometimento', positive: false },
+            { word: 'Autocrítico demais', value: 'comprometimento', positive: false },
+            { word: 'Cauteloso', value: 'seguranca', positive: true },
+            { word: 'Atento aos detalhes', value: 'seguranca', positive: true },
+            { word: 'Previdente', value: 'seguranca', positive: true },
+            { word: 'Organizado', value: 'seguranca', positive: true },
+            { word: 'Disciplinado', value: 'seguranca', positive: true },
+            { word: 'Metódico', value: 'seguranca', positive: true },
+            { word: 'Cuidadoso', value: 'seguranca', positive: true },
+            { word: 'Lento', value: 'seguranca', positive: false },
+            { word: 'Burocrático', value: 'seguranca', positive: false },
+            { word: 'Perfeccionista', value: 'seguranca', positive: false },
+            { word: 'Resistente a mudanças', value: 'seguranca', positive: false },
+            { word: 'Empático', value: 'ambiente', positive: true },
+            { word: 'Colaborativo', value: 'ambiente', positive: true },
+            { word: 'Bom ouvinte', value: 'ambiente', positive: true },
+            { word: 'Amigável', value: 'ambiente', positive: true },
+            { word: 'Paciente', value: 'ambiente', positive: true },
+            { word: 'Acolhedor', value: 'ambiente', positive: true },
+            { word: 'Companheiro', value: 'ambiente', positive: true },
+            { word: 'Evito conflitos', value: 'ambiente', positive: false },
+            { word: 'Sensível demais', value: 'ambiente', positive: false },
+            { word: 'Dependente de aprovação', value: 'ambiente', positive: false },
+            { word: 'Indeciso', value: 'ambiente', positive: false },
+            { word: 'Objetivo', value: 'resultado', positive: true },
+            { word: 'Prático', value: 'resultado', positive: true },
+            { word: 'Competitivo', value: 'resultado', positive: true },
+            { word: 'Determinado', value: 'resultado', positive: true },
+            { word: 'Eficiente', value: 'resultado', positive: true },
+            { word: 'Direto', value: 'resultado', positive: true },
+            { word: 'Produtivo', value: 'resultado', positive: true },
+            { word: 'Impaciente', value: 'resultado', positive: false },
+            { word: 'Impulsivo', value: 'resultado', positive: false },
+            { word: 'Insensível às vezes', value: 'resultado', positive: false },
+            { word: 'Ansioso', value: 'resultado', positive: false },
+            { word: 'Curioso', value: 'crescimento', positive: true },
+            { word: 'Criativo', value: 'crescimento', positive: true },
+            { word: 'Aberto a feedbacks', value: 'crescimento', positive: true },
+            { word: 'Inovador', value: 'crescimento', positive: true },
+            { word: 'Adaptável', value: 'crescimento', positive: true },
+            { word: 'Estudioso', value: 'crescimento', positive: true },
+            { word: 'Questionador', value: 'crescimento', positive: true },
+            { word: 'Inquieto', value: 'crescimento', positive: false },
+            { word: 'Disperso', value: 'crescimento', positive: false },
+            { word: 'Inconformado', value: 'crescimento', positive: false },
+            { word: 'Muitas ideias ao mesmo tempo', value: 'crescimento', positive: false }
+        ];
+
+        const valueInfo = {
+            comprometimento: {
+                name: 'Comprometimento',
+                description: 'Dedicação e responsabilidade com resultados',
+                improvements: [
+                    'Estabeleça metas pessoais alinhadas aos objetivos da empresa',
+                    'Pratique a gestão de tempo e priorização de tarefas',
+                    'Busque entender o impacto do seu trabalho nos resultados da equipe'
+                ]
+            },
+            seguranca: {
+                name: 'Trabalho Seguro',
+                description: 'Priorização da segurança em todas as atividades',
+                improvements: [
+                    'Torne-se multiplicador de boas práticas de segurança',
+                    'Sugira melhorias nos procedimentos de segurança',
+                    'Documente e compartilhe lições aprendidas'
+                ]
+            },
+            ambiente: {
+                name: 'Ambiente Saudável',
+                description: 'Construção de relações respeitosas e colaborativas',
+                improvements: [
+                    'Pratique escuta ativa e empatia nas interações diárias',
+                    'Ofereça ajuda aos colegas sempre que possível',
+                    'Participe ativamente de iniciativas de integração da equipe'
+                ]
+            },
+            resultado: {
+                name: 'Foco no Resultado',
+                description: 'Orientação para entrega e cumprimento de metas',
+                improvements: [
+                    'Defina metas claras e mensuráveis para suas atividades',
+                    'Acompanhe indicadores de desempenho regularmente',
+                    'Busque feedback sobre a qualidade das suas entregas'
+                ]
+            },
+            crescimento: {
+                name: 'Mentalidade de Crescimento',
+                description: 'Busca constante por aprendizado e desenvolvimento',
+                improvements: [
+                    'Dedique tempo semanal para aprender algo novo',
+                    'Solicite feedback construtivo sobre seu desempenho',
+                    'Compartilhe conhecimentos com a equipe'
+                ]
+            }
+        };
+
+        let state = {
+            step: 'personal_data',
+            phase: 1,
+            selectedWords1: [],
+            selectedWords2: [],
+            results: null,
+            userName: '',
+            userCPF: '',
+            shuffledWords: [],
+            startTime: null,
+            consentGiven: false
+        };
+        
+        const MIN_WORDS = 5;
+        const MAX_WORDS = 15;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        state.shuffledWords = shuffleArray(words);
+
+        function formatCPF(value) {
+            value = value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            return value;
+        }
+
+        function toggleWord(word) {
+            const selectedWords = state.phase === 1 ? state.selectedWords1 : state.selectedWords2;
+            
+            if (selectedWords.includes(word)) {
+                if (state.phase === 1) {
+                    state.selectedWords1 = state.selectedWords1.filter(w => w !== word);
+                } else {
+                    state.selectedWords2 = state.selectedWords2.filter(w => w !== word);
+                }
+            } else {
+                if (selectedWords.length >= MAX_WORDS) {
+                    alert(`⚠️ Limite atingido!\n\nVocê já selecionou o máximo de ${MAX_WORDS} palavras.\n\nRemova alguma palavra antes de adicionar outra.`);
+                    return;
+                }
+                if (state.phase === 1) {
+                    state.selectedWords1 = [...state.selectedWords1, word];
+                } else {
+                    state.selectedWords2 = [...state.selectedWords2, word];
+                }
+            }
+            
+            // Atualizar apenas os elementos necessários, não re-renderizar tudo
+            updateWordsDisplay();
+            updateCounter();
+        }
+        
+        function updateWordsDisplay() {
+            const selectedWords = state.phase === 1 ? state.selectedWords1 : state.selectedWords2;
+            document.querySelectorAll('.word-item').forEach(item => {
+                const wordText = item.querySelector('.word-text').textContent;
+                if (selectedWords.includes(wordText)) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+        
+        function updateCounter() {
+            const selectedWords = state.phase === 1 ? state.selectedWords1 : state.selectedWords2;
+            const counter = document.querySelector('.counter-badge');
+            const button = document.getElementById('nextButton');
+            const minAlert = document.getElementById('minWordsAlert');
+            const minAlertText = document.getElementById('minWordsText');
+            
+            if (counter) {
+                counter.textContent = `${selectedWords.length}/${MAX_WORDS}`;
+                
+                // Mudar cor baseado na quantidade
+                if (selectedWords.length >= MAX_WORDS) {
+                    // Máximo atingido - verde
+                    counter.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    counter.style.color = 'white';
+                } else if (selectedWords.length >= MIN_WORDS) {
+                    // Mínimo atingido - amarelo (ok para prosseguir)
+                    counter.style.background = 'linear-gradient(135deg, #EDD730 0%, #F5E04D 100%)';
+                    counter.style.color = '#1a2d47';
+                } else if (selectedWords.length > 0) {
+                    // Tem palavras mas não atingiu mínimo - laranja
+                    counter.style.background = 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)';
+                    counter.style.color = 'white';
+                } else {
+                    // Nenhuma palavra - cinza
+                    counter.style.background = 'linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%)';
+                    counter.style.color = '#6b7280';
+                }
+            }
+            
+            // Atualizar alerta de mínimo
+            if (minAlert && minAlertText) {
+                if (selectedWords.length > 0 && selectedWords.length < MIN_WORDS) {
+                    const remaining = MIN_WORDS - selectedWords.length;
+                    minAlert.style.display = 'block';
+                    minAlertText.textContent = `⚠️ Selecione mais ${remaining} palavra${remaining > 1 ? 's' : ''} para continuar`;
+                } else {
+                    minAlert.style.display = 'none';
+                }
+            }
+            
+            if (button) {
+                // Só habilita se tiver pelo menos o mínimo
+                if (selectedWords.length >= MIN_WORDS) {
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                } else {
+                    button.disabled = true;
+                    button.style.opacity = '0.5';
+                }
+            }
+        }
+
+        function calculateResults() {
+            const scores1 = { comprometimento: 0, seguranca: 0, ambiente: 0, resultado: 0, crescimento: 0 };
+            const scores2 = { comprometimento: 0, seguranca: 0, ambiente: 0, resultado: 0, crescimento: 0 };
+
+            state.selectedWords1.forEach(wordText => {
+                const word = words.find(w => w.word === wordText);
+                scores1[word.value] += word.positive ? 3 : 1;
+            });
+
+            state.selectedWords2.forEach(wordText => {
+                const word = words.find(w => w.word === wordText);
+                scores2[word.value] += word.positive ? 3 : 1;
+            });
+
+            const total1 = Object.values(scores1).reduce((a, b) => a + b, 0) || 1;
+            const total2 = Object.values(scores2).reduce((a, b) => a + b, 0) || 1;
+
+            const percentages1 = {};
+            const percentages2 = {};
+            
+            Object.keys(scores1).forEach(key => {
+                percentages1[key] = (scores1[key] / total1) * 100;
+                percentages2[key] = (scores2[key] / total2) * 100;
+            });
+
+            state.results = { percentages1, percentages2 };
+        }
+
+        function getOverallAdherence() {
+            let totalScore = 0;
+            let count = 0;
+            
+            Object.keys(valueInfo).forEach(key => {
+                const avg = (state.results.percentages1[key] + state.results.percentages2[key]) / 2;
+                totalScore += avg;
+                count++;
+            });
+            
+            const overallScore = Math.round(totalScore / count);
+            
+            let label = '', description = '';
+            
+            if (overallScore >= 75) {
+                label = 'Altamente Adequado';
+                description = 'Fortemente alinhado';
+            } else if (overallScore >= 60) {
+                label = 'Adequado';
+                description = 'Parcialmente alinhado';
+            } else if (overallScore >= 45) {
+                label = 'Desenvolvimento';
+                description = 'Em desenvolvimento';
+            } else {
+                label = 'Atenção Necessária';
+                description = 'Requer atenção';
+            }
+            
+            return { score: overallScore, label, description };
+        }
+
+        function getValueStatus(percentage) {
+            if (percentage >= 70) return { label: 'Adequado', class: 'status-adequado' };
+            return { label: 'Em desenvolvimento', class: 'status-desenvolvimento' };
+        }
+
+        async function sendToRH() {
+            state.step = 'sending';
+            render();
+
+            try {
+                const totalTime = state.startTime ? Math.round((Date.now() - state.startTime) / 1000) : 0;
+                
+                await fetch(FORMSPREE_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({
+                        name: state.userName,
+                        cpf: state.userCPF,
+                        date: new Date().toLocaleString('pt-BR'),
+                        totalTime: totalTime,
+                        selectedWords1: state.selectedWords1.join(', '),
+                        selectedWords2: state.selectedWords2.join(', '),
+                        _subject: `[Aderência Cultural] ${state.userName}`,
+                        _replyto: RH_EMAIL
+                    })
+                });
+
+                setTimeout(() => {
+                    state.step = 'results';
+                    render();
+                }, 1500);
+            } catch (error) {
+                console.error('Erro ao enviar:', error);
+                setTimeout(() => {
+                    state.step = 'results';
+                    render();
+                }, 1500);
+            }
+        }
+
+        // RENDER
+
+        function renderPersonalData() {
+            return `
+                <div class="fade-in">
+                    <div class="main-header">
+                        <div class="header-content">
+                            <h1 class="main-title">Avaliação de Aderência Cultura</h1>
+                            <h2 class="main-subtitle">Brasil Infra</h2>
+                            <p class="main-tagline">Construindo Progresso com Você</p>
+                        </div>
+                    </div>
+
+                    <div class="content-container">
+                        <div class="white-card">
+                            <div class="instruction-box">
+                                <div class="instruction-title">
+                                    📋 Instruções Importantes
+                                </div>
+                                <p class="instruction-text">
+                                    Responda com sinceridade e atenção. Não existem respostas certas ou erradas, 
+                                    apenas respostas verdadeiras sobre como você realmente é. Suas respostas nos 
+                                    ajudarão a identificar oportunidades de desenvolvimento e adequação de posição.
+                                </p>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Nome Completo</label>
+                                <input 
+                                    type="text" 
+                                    id="userName"
+                                    class="form-input"
+                                    placeholder="Digite seu nome completo"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">CPF (somente números)</label>
+                                <input 
+                                    type="text" 
+                                    id="userCPF"
+                                    class="form-input"
+                                    placeholder="Digite seu CPF"
+                                    maxlength="14"
+                                    oninput="this.value = formatCPF(this.value)"
+                                />
+                            </div>
+
+                            <div class="privacy-box">
+                                <div class="privacy-title">
+                                    📄 Política de Privacidade e Uso de Dados
+                                </div>
+                                <div class="privacy-section">
+                                    <div class="privacy-section-title">Coleta e Uso de Dados:</div>
+                                    <div class="privacy-section-text">
+                                        As informações fornecidas nesta avaliação serão utilizadas exclusivamente 
+                                        para fins de análise de aderência cultural e desenvolvimento profissional.
+                                    </div>
+                                </div>
+                                <div class="privacy-section">
+                                    <div class="privacy-section-title">Proteção de Dados:</div>
+                                    <div class="privacy-section-text">
+                                        Seus dados pessoais serão tratados conforme a Lei Geral de Proteção de 
+                                        Dados (LGPD - Lei nº 13.709/2018).
+                                    </div>
+                                </div>
+                                <div class="privacy-section">
+                                    <div class="privacy-section-title">Confidencialidade:</div>
+                                    <div class="privacy-section-text">
+                                        As respostas serão acessadas apenas pela equipe de RH e gestão, mantendo 
+                                        total confidencialidade.
+                                    </div>
+                                </div>
+                                <div class="privacy-section">
+                                    <div class="privacy-section-title">Análise de Resultados:</div>
+                                    <div class="privacy-section-text">
+                                        Os resultados são processados para gerar insights sobre desenvolvimento 
+                                        profissional e adequação cultural.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="checkbox-container" onclick="toggleConsent()">
+                                <div class="custom-checkbox" id="consentCheckbox"></div>
+                                <div class="checkbox-label">
+                                    Li e aceito a Política de Privacidade e autorizo o tratamento dos meus 
+                                    dados conforme a LGPD
+                                </div>
+                            </div>
+
+                            <button onclick="validatePersonalData()" class="btn-start">
+                                Iniciar Avaliação
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPhase() {
+            const isPhase1 = state.step === 'phase1';
+            const selectedWords = isPhase1 ? state.selectedWords1 : state.selectedWords2;
+            const progress = isPhase1 ? 33 : 66;
+
+            return `
+                <div class="fade-in">
+                    <div class="main-header">
+                        <div class="header-content">
+                            <h1 class="main-title">Avaliação de Aderência Cultura</h1>
+                            <h2 class="main-subtitle">Brasil Infra</h2>
+                            <p class="main-tagline">Construindo Progresso com Você</p>
+                        </div>
+                    </div>
+
+                    <div class="content-container">
+                        <div class="white-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 12px; font-weight: 700; color: var(--text-gray); letter-spacing: 1px; margin-bottom: 6px;">
+                                        ETAPA ${isPhase1 ? '1' : '2'} DE 2
+                                    </div>
+                                    <h2 style="font-size: 24px; font-weight: 800; margin: 0; color: #2B4366;">
+                                        ${isPhase1 ? '🌟 Minha Essência Natural' : '💼 Demanda do Ambiente'}
+                                    </h2>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 11px; font-weight: 600; color: #4a5568; margin-bottom: 4px;">
+                                        Palavras selecionadas
+                                    </div>
+                                    <div class="counter-badge">
+                                        ${selectedWords.length}/${MAX_WORDS}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${progress}%;"></div>
+                            </div>
+
+                            <div class="instruction-box">
+                                <p class="instruction-text" style="margin: 0;">
+                                    ${isPhase1 
+                                        ? '<strong>💭 Reflexão:</strong> Escolha palavras que descrevem <strong>quem você realmente é</strong>, sua personalidade genuína.<br><br>📊 <strong>Selecione de 5 a 15 palavras</strong> que melhor representam você.'
+                                        : '<strong>🎯 Contexto:</strong> Escolha palavras que descrevem <strong>o que o ambiente de trabalho exige</strong> de você.<br><br>📊 <strong>Selecione de 5 a 15 palavras</strong> que melhor descrevem as demandas.'}
+                                </p>
+                                <div id="minWordsAlert" style="display: none; margin-top: 12px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffa500; border-radius: 6px;">
+                                    <span id="minWordsText" style="font-size: 13px; color: #856404; font-weight: 600;"></span>
+                                </div>
+                            </div>
+
+                            <div class="words-grid">
+                                ${state.shuffledWords.map(w => {
+                                    const isSelected = selectedWords.includes(w.word);
+                                    return `
+                                        <div class="word-item ${isSelected ? 'selected' : ''}" 
+                                             onclick="toggleWord('${w.word.replace(/'/g, "\\'")}')">
+                                            <span class="word-text">${w.word}</span>
+                                            <div class="word-check">✓</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+
+                            <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px;">
+                                ${!isPhase1 ? `
+                                    <button onclick="state.step = 'phase1'; state.phase = 1; render();" 
+                                            style="padding: 16px 36px; border-radius: 12px; font-weight: 700; border: 2px solid #2B4366; background: white; color: #2B4366; cursor: pointer;">
+                                        ← Voltar
+                                    </button>
+                                ` : ''}
+                                <button 
+                                    onclick="${isPhase1 ? 'goToPhase2()' : 'finishTest()'}"
+                                    class="btn-start"
+                                    style="flex: 1; max-width: 400px;"
+                                    id="nextButton"
+                                >
+                                    ${isPhase1 ? 'Próxima Etapa →' : 'Finalizar e Ver Resultados'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSending() {
+            return `
+                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; padding: 20px;">
+                        <div class="spinner" style="margin: 0 auto 24px;"></div>
+                        <h2 style="font-size: 24px; font-weight: 800; color: #2B4366; margin-bottom: 8px;">
+                            Enviando para RH...
+                        </h2>
+                        <p style="font-size: 14px; color: #4a5568;">
+                            Processando suas respostas e preparando resultados
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            const overall = getOverallAdherence();
+            
+            return `
+                <div class="fade-in">
+                    <div class="main-header">
+                        <div class="header-content">
+                            <h1 class="main-title">Resultado da Avaliação</h1>
+                            <h2 class="main-subtitle">Brasil Infra</h2>
+                        </div>
+                    </div>
+
+                    <div class="content-container">
+                        <div style="background: #d1fae5; border: 2px solid #10b981; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: center;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+                            <div style="font-weight: 700; color: #065f46; margin-bottom: 4px;">Avaliação Enviada com Sucesso!</div>
+                            <div style="font-size: 14px; color: #047857;">Seus resultados foram enviados para o RH e estão disponíveis abaixo para consulta.</div>
+                        </div>
+                        
+                        <div style="background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 20px;">
+                            <div class="result-header">
+                                <h1 style="font-size: 32px; font-weight: 800; margin: 0;">${state.userName}</h1>
+                                <div class="overall-score">${overall.score}%</div>
+                                <div class="adherence-badge">${overall.label}</div>
+                                <p style="margin-top: 8px; font-size: 16px; opacity: 0.95;">${overall.description}</p>
+                            </div>
+
+                            <div style="padding: 32px;">
+                                ${Object.keys(valueInfo).map(key => {
+                                    const natural = state.results.percentages1[key];
+                                    const adapted = state.results.percentages2[key];
+                                    const avg = (natural + adapted) / 2;
+                                    const status = getValueStatus(avg);
+                                    const info = valueInfo[key];
+
+                                    return `
+                                        <div class="value-card" style="border-color: #2B4366;">
+                                            <div class="value-header">
+                                                <div style="flex: 1;">
+                                                    <div class="value-title" style="color: #2B4366;">
+                                                        ${info.name}
+                                                    </div>
+                                                    <div class="value-description">
+                                                        ${info.description}
+                                                    </div>
+                                                </div>
+                                                <div style="text-align: right;">
+                                                    <div class="value-percentage" style="color: #2B4366;">
+                                                        ${Math.round(avg)}%
+                                                    </div>
+                                                    <div class="value-status-badge ${status.class}">
+                                                        ${status.label}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="value-progress-bar">
+                                                <div class="value-progress-fill" style="width: ${avg}%;"></div>
+                                            </div>
+
+                                            <div class="improvement-section">
+                                                <div class="improvement-title">
+                                                    ⚡ Como melhorar neste valor:
+                                                </div>
+                                                <ul class="improvement-list">
+                                                    ${info.improvements.map(imp => `<li>${imp}</li>`).join('')}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+
+                                <div style="text-align: center; margin-top: 40px;">
+                                    <button onclick="location.reload()" class="btn-start" style="max-width: 400px;">
+                                        🔄 Realizar Nova Avaliação
+                                    </button>
+                                </div>
+
+                                <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 2px solid #f1f5f9;">
+                                    <div style="font-weight: 700; color: #2B4366; font-size: 18px; margin-bottom: 4px;">BRASIL INFRA</div>
+                                    <p style="font-size: 13px; color: #4a5568;">
+                                        Construindo Progresso com Você
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // HELPERS
+
+        function toggleConsent() {
+            state.consentGiven = !state.consentGiven;
+            const checkbox = document.getElementById('consentCheckbox');
+            if (checkbox) {
+                checkbox.classList.toggle('checked', state.consentGiven);
+            }
+        }
+
+        function validatePersonalData() {
+            const name = document.getElementById('userName').value.trim();
+            const cpf = document.getElementById('userCPF').value.trim();
+            
+            if (!name) {
+                alert('❌ Por favor, informe seu nome completo.');
+                return;
+            }
+            
+            if (!cpf || cpf.length < 14) {
+                alert('❌ Por favor, informe um CPF válido.');
+                return;
+            }
+            
+            if (!state.consentGiven) {
+                alert('❌ Por favor, aceite a Política de Privacidade.');
+                return;
+            }
+            
+            state.userName = name;
+            state.userCPF = cpf;
+            state.startTime = Date.now();
+            state.step = 'phase1';
+            render();
+        }
+
+        function goToPhase2() {
+            if (state.selectedWords1.length < MIN_WORDS) {
+                alert(`❌ Selecione pelo menos ${MIN_WORDS} palavras para continuar.\n\n📊 Você precisa escolher entre ${MIN_WORDS} e ${MAX_WORDS} palavras para uma análise confiável.\n\n✅ Palavras selecionadas: ${state.selectedWords1.length}/${MIN_WORDS}`);
+                return;
+            }
+            state.step = 'phase2';
+            state.phase = 2;
+            render();
+        }
+
+        function finishTest() {
+            if (state.selectedWords2.length < MIN_WORDS) {
+                alert(`❌ Selecione pelo menos ${MIN_WORDS} palavras para finalizar.\n\n📊 Você precisa escolher entre ${MIN_WORDS} e ${MAX_WORDS} palavras para uma análise confiável.\n\n✅ Palavras selecionadas: ${state.selectedWords2.length}/${MIN_WORDS}`);
+                return;
+            }
+            calculateResults();
+            sendToRH();
+        }
+
+        function render() {
+            let html = '';
+            
+            if (state.step === 'personal_data') html = renderPersonalData();
+            else if (state.step === 'phase1' || state.step === 'phase2') html = renderPhase();
+            else if (state.step === 'sending') html = renderSending();
+            else if (state.step === 'results') html = renderResults();
+            
+            document.getElementById('app').innerHTML = html;
+        }
+
+        render();
+    </script>
+</body>
+</html>
