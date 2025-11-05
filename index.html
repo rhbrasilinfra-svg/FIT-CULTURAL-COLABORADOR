@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliação de Aderência Cultura - Brasil Infra</title>
+    <title>Fit Cultural do Colaborador (a) - Brasil Infra</title>
     <style>
         * {
             margin: 0;
@@ -628,7 +628,7 @@
         <!-- TELA 1: Instruções -->
         <div class="instructions-screen" id="instructionsScreen">
             <div class="header-banner">
-                <div class="header-title">FIT CULTURAL COLABORADOR (A)</div>
+                <div class="header-title">FIT CULTURAL DO COLABORADOR (A)</div>
                 <div class="header-company">Brasil Infra</div>
                 <div class="header-tagline">Construindo Progresso com Você</div>
             </div>
@@ -694,13 +694,13 @@
             <div class="warning-box">
                 <h3>⏱️ Instruções Importantes</h3>
                 <ul>
-                    <li>Reserve pelo menos <strong>6-7 minutos</strong> para completar o teste</li>
+                    <li>Reserve pelo menos <strong>4-5 minutos</strong> para completar o teste</li>
                     <li>Leia cada palavra com atenção e reflita sobre seu significado</li>
                     <li>Escolha as palavras que melhor representam você (Fase 1) e como você age no trabalho (Fase 2)</li>
                     <li>Não há respostas certas ou erradas, seja honesto e genuíno</li>
                 </ul>
                 <div class="highlight">
-                    ⏰ Tempo médio esperado: 6 minutos
+                    ⏰ Tempo ideal: 4-5 minutos
                 </div>
             </div>
             
@@ -966,11 +966,18 @@
             const phase1Details = calculateWordPercentages(testState.phase1Selections);
             const phase2Details = calculateWordPercentages(testState.phase2Selections);
             
+            // Calcular métricas de validação (apenas para e-mail)
+            const metricas = calculateValidationMetrics(
+                testState.phase1Selections, 
+                testState.phase2Selections, 
+                totalTime
+            );
+            
             const aderenciaScore = Math.round(
                 Object.values(phase2Scores).reduce((a, b) => a + b, 0) / 5
             );
             
-            const isReliable = totalTime >= 180;
+            const isReliable = totalTime >= 138; // 2.30 minutos = 138 segundos
             
             // Enviar para Formspree
             sendToFormspree({
@@ -982,6 +989,7 @@
                 phase2Scores,
                 phase1Details,
                 phase2Details,
+                metricas,
                 isReliable
             });
             
@@ -992,6 +1000,164 @@
                 totalTime,
                 isReliable
             });
+        }
+        
+        function calculateValidationMetrics(phase1Selections, phase2Selections, totalTime) {
+            const allSelections = [...phase1Selections, ...phase2Selections];
+            
+            // 1. Desejabilidade Social - % de palavras positivas no total
+            let totalPositivas = 0;
+            let totalNegativas = 0;
+            
+            allSelections.forEach(index => {
+                const item = testState.currentWords[index];
+                if (item.valence === 'positive') totalPositivas++;
+                else totalNegativas++;
+            });
+            
+            const totalPalavras = allSelections.length;
+            const desejabilidadeSocial = Math.round((totalPositivas / totalPalavras) * 100);
+            
+            let desejabilidadeNivel = 'Normal';
+            if (desejabilidadeSocial > 85) desejabilidadeNivel = 'Alta';
+            else if (desejabilidadeSocial < 30) desejabilidadeNivel = 'Baixa';
+            
+            // 2. Inconsistências - diferença entre valores similares nas duas fases
+            const inconsistencias = [];
+            Object.keys(VALUES).forEach(value => {
+                const diff = Math.abs(
+                    calculateScoresByValue(phase1Selections)[value] - 
+                    calculateScoresByValue(phase2Selections)[value]
+                );
+                if (diff > 40) {
+                    inconsistencias.push(`${value}: ${diff}% de diferença`);
+                }
+            });
+            
+            // 3. Respostas Extremas - conta quantas pessoas escolheram só positivas ou só negativas
+            let valoresExtremos = 0;
+            Object.keys(VALUES).forEach(value => {
+                const details = calculateWordPercentages(phase2Selections)[value];
+                if (details.porcentagemPositivas === 100 || details.porcentagemNegativas === 100) {
+                    valoresExtremos++;
+                }
+            });
+            
+            const respostasExtremas = Math.round((valoresExtremos / 5) * 100);
+            let extremasNivel = 'Normal';
+            if (respostasExtremas > 60) extremasNivel = 'Excesso de extremos';
+            
+            // 4. Tempo Total - conforme nova tabela de parâmetros
+            const minutos = totalTime / 60;
+            let tempoNivel = '';
+            let tempoClassificacao = '';
+            let tempoInterpretacao = '';
+            let tempoAcao = '';
+            
+            if (minutos < 2.30) {
+                tempoNivel = 'MUITO RÁPIDO';
+                tempoClassificacao = '⚠️';
+                tempoInterpretacao = 'Respostas automáticas sem reflexão';
+                tempoAcao = 'Rejeitar ou reaplicar teste';
+            } else if (minutos >= 2.30 && minutos < 4) {
+                tempoNivel = 'RÁPIDO';
+                tempoClassificacao = '⚠️';
+                tempoInterpretacao = 'Possível falta de atenção';
+                tempoAcao = 'Analisar com cautela';
+            } else if (minutos >= 4 && minutos <= 5) {
+                tempoNivel = 'IDEAL';
+                tempoClassificacao = '✅';
+                tempoInterpretacao = 'Tempo adequado de reflexão';
+                tempoAcao = 'Resultado confiável';
+            } else if (minutos > 5 && minutos <= 6.30) {
+                tempoNivel = 'LENTO';
+                tempoClassificacao = '⚠️';
+                tempoInterpretacao = 'Pode indicar indecisão';
+                tempoAcao = 'Analisar contexto';
+            } else {
+                tempoNivel = 'MUITO LENTO';
+                tempoClassificacao = '⚠️';
+                tempoInterpretacao = 'Possível distração ou dificuldade';
+                tempoAcao = 'Considerar reaplicação';
+            }
+            
+            const tempoScore = minutos >= 4 && minutos <= 5 ? 1.00 : Math.round((minutos / 4.5) * 100) / 100;
+            
+            // 5. Variação de Respostas - verifica se há diversidade
+            const scoresArray = Object.values(calculateScoresByValue(phase2Selections));
+            const media = scoresArray.reduce((a, b) => a + b, 0) / scoresArray.length;
+            const variancia = scoresArray.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / scoresArray.length;
+            const desvioPadrao = Math.sqrt(variancia);
+            
+            const variacaoScore = (desvioPadrao / 100).toFixed(2);
+            let variacaoNivel = 'Normal';
+            if (desvioPadrao < 5) variacaoNivel = 'Muito uniforme';
+            else if (desvioPadrao > 30) variacaoNivel = 'Muito variada';
+            
+            // Pontos de Atenção
+            const pontosAtencao = [];
+            
+            if (desejabilidadeSocial > 85) {
+                pontosAtencao.push('Alta desejabilidade social - possível tendência a respostas socialmente aceitáveis');
+            }
+            if (inconsistencias.length > 0) {
+                pontosAtencao.push(`Inconsistências detectadas entre respostas contraditórias - possível falta de sinceridade ou atenção`);
+            }
+            if (respostasExtremas > 60) {
+                pontosAtencao.push('Excesso de respostas extremas (1 ou 5) - possível polarização nas respostas');
+            }
+            if (minutos < 2.30) {
+                pontosAtencao.push(`Tempo MUITO RÁPIDO (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
+            } else if (minutos >= 2.30 && minutos < 4) {
+                pontosAtencao.push(`Tempo RÁPIDO (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
+            } else if (minutos > 6.30) {
+                pontosAtencao.push(`Tempo MUITO LENTO (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
+            }
+            if (desvioPadrao < 5) {
+                pontosAtencao.push('Padrão de respostas muito uniforme - possível resposta automática ou desatenta');
+            }
+            
+            // Recomendação baseada nos novos parâmetros
+            let recomendacao = 'Resultado confiável. Prosseguir com análise dos valores culturais.';
+            
+            if (minutos < 2.30) {
+                recomendacao = 'Resultado NÃO CONFIÁVEL - Tempo muito rápido. REJEITAR ou REAPLICAR teste.';
+            } else if (minutos > 6.30) {
+                recomendacao = 'Resultado com ressalvas - Tempo muito lento. Considerar REAPLICAÇÃO.';
+            } else if (pontosAtencao.length > 2) {
+                recomendacao = 'Resultado com ressalvas. Analisar com CAUTELA e considerar entrevista complementar.';
+            } else if (minutos >= 4 && minutos <= 5 && pontosAtencao.length === 0) {
+                recomendacao = 'Resultado IDEAL e CONFIÁVEL. Tempo adequado de reflexão. Prosseguir normalmente.';
+            }
+            
+            return {
+                desejabilidadeSocial: {
+                    percentual: `${desejabilidadeSocial}%`,
+                    nivel: desejabilidadeNivel
+                },
+                inconsistencias: {
+                    quantidade: inconsistencias.length,
+                    detalhes: inconsistencias.join(' | ') || 'Nenhuma detectada'
+                },
+                respostasExtremas: {
+                    percentual: `${respostasExtremas}%`,
+                    nivel: extremasNivel
+                },
+                tempoTotal: {
+                    minutos: minutos.toFixed(2),
+                    score: tempoScore,
+                    nivel: tempoNivel,
+                    classificacao: tempoClassificacao,
+                    interpretacao: tempoInterpretacao,
+                    acao: tempoAcao
+                },
+                variacaoRespostas: {
+                    score: variacaoScore,
+                    nivel: variacaoNivel
+                },
+                pontosAtencao: pontosAtencao.length > 0 ? pontosAtencao.join(' | ') : 'Nenhum ponto de atenção',
+                recomendacao: recomendacao
+            };
         }
         
         function calculateWordPercentages(selections) {
@@ -1066,10 +1232,27 @@
                 cpf: data.cpf,
                 data: new Date().toLocaleString('pt-BR'),
                 tempoTotal: `${minutes}min ${seconds}s`,
+                
+                // Confiabilidade
                 confiabilidade: {
                     nivel: data.isReliable ? 'Alta Confiabilidade' : 'Baixa Confiabilidade',
                     score: data.aderenciaScore
                 },
+                
+                // Métricas de Validação (APENAS E-MAIL)
+                metricas: {
+                    desejabilidadeSocial: `${data.metricas.desejabilidadeSocial.percentual} - ${data.metricas.desejabilidadeSocial.nivel}`,
+                    inconsistencias: `${data.metricas.inconsistencias.quantidade} - ${data.metricas.inconsistencias.detalhes}`,
+                    respostasExtremas: `${data.metricas.respostasExtremas.percentual} - ${data.metricas.respostasExtremas.nivel}`,
+                    tempoTotal: `${data.metricas.tempoTotal.minutos}min - ${data.metricas.tempoTotal.classificacao} ${data.metricas.tempoTotal.nivel}`,
+                    tempoInterpretacao: data.metricas.tempoTotal.interpretacao,
+                    tempoAcao: data.metricas.tempoTotal.acao,
+                    variacaoRespostas: `${data.metricas.variacaoRespostas.score} - ${data.metricas.variacaoRespostas.nivel}`
+                },
+                
+                pontosAtencao: data.metricas.pontosAtencao,
+                recomendacao: data.metricas.recomendacao,
+                
                 scoreGeral: `${data.aderenciaScore}% - ${getAderenciaLevel(data.aderenciaScore)}`,
                 
                 // Fase 1 - Perfil Natural
