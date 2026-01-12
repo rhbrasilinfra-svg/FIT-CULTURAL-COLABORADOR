@@ -650,7 +650,7 @@
                 <h2>📋 Sobre a Brasil Infra</h2>
                 <p>
                     A <strong>Brasil Infra</strong> é uma empresa comprometida com o desenvolvimento de infraestrutura 
-                     no Brasil. Nossa missão é construir o progresso do país através de projetos 
+                    sustentável e inovadora no Brasil. Nossa missão é construir o progresso do país através de projetos 
                     que transformam comunidades e geram valor para a sociedade.
                 </p>
                 <p>
@@ -751,39 +751,15 @@
             </div>
         </div>
         
-        <!-- TELA 3: Resultados -->
+        <!-- TELA 3: Resultados - SIMPLIFICADA PARA O COLABORADOR -->
         <div class="results-screen" id="resultsScreen">
-            <!-- Mensagem de Sucesso (sempre visível) -->
+            <!-- Mensagem de Sucesso (ÚNICA coisa visível para o colaborador) -->
             <div class="success-message">
                 <h3>
                     <span>✅</span>
                     <span>Avaliação Concluída com Sucesso!</span>
                 </h3>
                 <p>O RH já recebeu seu resultado e entrará em contato em breve.</p>
-            </div>
-            
-            <div class="metrics-card">
-                <div class="metric-value" id="aderenciaValue">--</div>
-                <div class="metric-label">Aderência Cultural</div>
-                <div class="metric-description">
-                    <span id="aderenciaEmoji"></span>
-                    <span id="aderenciaDesc">--</span>
-                </div>
-            </div>
-            
-            <div class="profile-section">
-                <h2 class="profile-title">Perfil Natural (Quem você é)</h2>
-                <div id="naturalProfile"></div>
-            </div>
-            
-            <div class="profile-section">
-                <h2 class="profile-title">Perfil Adaptado (Como você age)</h2>
-                <div id="adaptedProfile"></div>
-            </div>
-            
-            <div class="suggestions-section">
-                <h2 class="suggestions-title">💡 Sugestões Personalizadas</h2>
-                <div id="suggestionsContainer"></div>
             </div>
             
             <!-- Rodapé -->
@@ -1222,16 +1198,29 @@
             return scores;
         }
         
-        // Enviar para Formspree - ENDPOINT CORRETO
+        // Enviar para Formspree - DADOS COMPLETOS PARA O RH
         async function sendToFormspree(data) {
             const minutes = Math.floor(data.tempoTotal / 60);
             const seconds = data.tempoTotal % 60;
+            
+            // Calcular classificação de aderência
+            const {nivel, emoji} = getAderenciaClassification(data.aderenciaScore);
+            
+            // Gerar sugestões personalizadas em texto
+            const sugestoes = generateSuggestionsText(data.phase2Scores);
             
             const formData = {
                 nome: data.nome,
                 cpf: data.cpf,
                 data: new Date().toLocaleString('pt-BR'),
                 tempoTotal: `${minutes}min ${seconds}s`,
+                
+                // RESULTADO PRINCIPAL
+                aderenciaCultural: {
+                    score: `${data.aderenciaScore}%`,
+                    classificacao: `${emoji} ${nivel}`,
+                    nivel: getAderenciaLevel(data.aderenciaScore)
+                },
                 
                 // Confiabilidade
                 confiabilidade: {
@@ -1253,61 +1242,66 @@
                 pontosAtencao: data.metricas.pontosAtencao,
                 recomendacao: data.metricas.recomendacao,
                 
-                scoreGeral: `${data.aderenciaScore}% - ${getAderenciaLevel(data.aderenciaScore)}`,
+                // PERFIL NATURAL - Fase 1 (Quem você é)
+                perfilNatural: {
+                    comprometimento: {
+                        score: `${data.phase1Scores['Comprometimento']}%`,
+                        positivas: `${data.phase1Details['Comprometimento'].porcentagemPositivas}%`,
+                        negativas: `${data.phase1Details['Comprometimento'].porcentagemNegativas}%`
+                    },
+                    trabalhoSeguro: {
+                        score: `${data.phase1Scores['Trabalho Seguro']}%`,
+                        positivas: `${data.phase1Details['Trabalho Seguro'].porcentagemPositivas}%`,
+                        negativas: `${data.phase1Details['Trabalho Seguro'].porcentagemNegativas}%`
+                    },
+                    ambienteSaudavel: {
+                        score: `${data.phase1Scores['Ambiente Saudável']}%`,
+                        positivas: `${data.phase1Details['Ambiente Saudável'].porcentagemPositivas}%`,
+                        negativas: `${data.phase1Details['Ambiente Saudável'].porcentagemNegativas}%`
+                    },
+                    focoResultado: {
+                        score: `${data.phase1Scores['Foco no Resultado']}%`,
+                        positivas: `${data.phase1Details['Foco no Resultado'].porcentagemPositivas}%`,
+                        negativas: `${data.phase1Details['Foco no Resultado'].porcentagemNegativas}%`
+                    },
+                    mentalidadeCrescimento: {
+                        score: `${data.phase1Scores['Mentalidade de Crescimento']}%`,
+                        positivas: `${data.phase1Details['Mentalidade de Crescimento'].porcentagemPositivas}%`,
+                        negativas: `${data.phase1Details['Mentalidade de Crescimento'].porcentagemNegativas}%`
+                    }
+                },
                 
-                // Fase 1 - Perfil Natural
-                fase1_comprometimento: {
-                    score: `${data.phase1Scores['Comprometimento']}%`,
-                    positivas: `${data.phase1Details['Comprometimento'].porcentagemPositivas}%`,
-                    negativas: `${data.phase1Details['Comprometimento'].porcentagemNegativas}%`
-                },
-                fase1_trabalhoSeguro: {
-                    score: `${data.phase1Scores['Trabalho Seguro']}%`,
-                    positivas: `${data.phase1Details['Trabalho Seguro'].porcentagemPositivas}%`,
-                    negativas: `${data.phase1Details['Trabalho Seguro'].porcentagemNegativas}%`
-                },
-                fase1_ambienteSaudavel: {
-                    score: `${data.phase1Scores['Ambiente Saudável']}%`,
-                    positivas: `${data.phase1Details['Ambiente Saudável'].porcentagemPositivas}%`,
-                    negativas: `${data.phase1Details['Ambiente Saudável'].porcentagemNegativas}%`
-                },
-                fase1_focoResultado: {
-                    score: `${data.phase1Scores['Foco no Resultado']}%`,
-                    positivas: `${data.phase1Details['Foco no Resultado'].porcentagemPositivas}%`,
-                    negativas: `${data.phase1Details['Foco no Resultado'].porcentagemNegativas}%`
-                },
-                fase1_mentalidadeCrescimento: {
-                    score: `${data.phase1Scores['Mentalidade de Crescimento']}%`,
-                    positivas: `${data.phase1Details['Mentalidade de Crescimento'].porcentagemPositivas}%`,
-                    negativas: `${data.phase1Details['Mentalidade de Crescimento'].porcentagemNegativas}%`
+                // PERFIL ADAPTADO - Fase 2 (Como você age)
+                perfilAdaptado: {
+                    comprometimento: {
+                        score: `${data.phase2Scores['Comprometimento']}%`,
+                        positivas: `${data.phase2Details['Comprometimento'].porcentagemPositivas}%`,
+                        negativas: `${data.phase2Details['Comprometimento'].porcentagemNegativas}%`
+                    },
+                    trabalhoSeguro: {
+                        score: `${data.phase2Scores['Trabalho Seguro']}%`,
+                        positivas: `${data.phase2Details['Trabalho Seguro'].porcentagemPositivas}%`,
+                        negativas: `${data.phase2Details['Trabalho Seguro'].porcentagemNegativas}%`
+                    },
+                    ambienteSaudavel: {
+                        score: `${data.phase2Scores['Ambiente Saudável']}%`,
+                        positivas: `${data.phase2Details['Ambiente Saudável'].porcentagemPositivas}%`,
+                        negativas: `${data.phase2Details['Ambiente Saudável'].porcentagemNegativas}%`
+                    },
+                    focoResultado: {
+                        score: `${data.phase2Scores['Foco no Resultado']}%`,
+                        positivas: `${data.phase2Details['Foco no Resultado'].porcentagemPositivas}%`,
+                        negativas: `${data.phase2Details['Foco no Resultado'].porcentagemNegativas}%`
+                    },
+                    mentalidadeCrescimento: {
+                        score: `${data.phase2Scores['Mentalidade de Crescimento']}%`,
+                        positivas: `${data.phase2Details['Mentalidade de Crescimento'].porcentagemPositivas}%`,
+                        negativas: `${data.phase2Details['Mentalidade de Crescimento'].porcentagemNegativas}%`
+                    }
                 },
                 
-                // Fase 2 - Perfil Adaptado
-                fase2_comprometimento: {
-                    score: `${data.phase2Scores['Comprometimento']}%`,
-                    positivas: `${data.phase2Details['Comprometimento'].porcentagemPositivas}%`,
-                    negativas: `${data.phase2Details['Comprometimento'].porcentagemNegativas}%`
-                },
-                fase2_trabalhoSeguro: {
-                    score: `${data.phase2Scores['Trabalho Seguro']}%`,
-                    positivas: `${data.phase2Details['Trabalho Seguro'].porcentagemPositivas}%`,
-                    negativas: `${data.phase2Details['Trabalho Seguro'].porcentagemNegativas}%`
-                },
-                fase2_ambienteSaudavel: {
-                    score: `${data.phase2Scores['Ambiente Saudável']}%`,
-                    positivas: `${data.phase2Details['Ambiente Saudável'].porcentagemPositivas}%`,
-                    negativas: `${data.phase2Details['Ambiente Saudável'].porcentagemNegativas}%`
-                },
-                fase2_focoResultado: {
-                    score: `${data.phase2Scores['Foco no Resultado']}%`,
-                    positivas: `${data.phase2Details['Foco no Resultado'].porcentagemPositivas}%`,
-                    negativas: `${data.phase2Details['Foco no Resultado'].porcentagemNegativas}%`
-                },
-                fase2_mentalidadeCrescimento: {
-                    score: `${data.phase2Scores['Mentalidade de Crescimento']}%`,
-                    positivas: `${data.phase2Details['Mentalidade de Crescimento'].porcentagemPositivas}%`,
-                    negativas: `${data.phase2Details['Mentalidade de Crescimento'].porcentagemNegativas}%`
-                },
+                // SUGESTÕES PERSONALIZADAS
+                sugestoesPersonalizadas: sugestoes,
                 
                 _replyto: 'rhbrasilinfra@gmail.com'
             };
@@ -1325,19 +1319,39 @@
             }
         }
         
+        // Gerar texto das sugestões para o e-mail
+        function generateSuggestionsText(scores) {
+            let text = '';
+            
+            // Sugestões de melhoria (para valores < 61%)
+            Object.entries(scores).forEach(([value, score]) => {
+                if (score < 61) {
+                    const level = score >= 41 ? 'Requer Atenção' : 'Crítico';
+                    const emoji = score >= 41 ? '⚠️' : '❌';
+                    text += `\n${emoji} ${value} (${score}% - ${level}):\n`;
+                    const suggestions = getSuggestionsForValue(value);
+                    suggestions.forEach(s => text += `  → ${s}\n`);
+                }
+            });
+            
+            // Sugestões de continuidade (para todos)
+            text += '\n✅ Continue Alinhado com Nossa Cultura:\n';
+            text += '  → Participe ativamente de projetos que ergam histórias e construam o futuro do Brasil\n';
+            text += '  → Mantenha o compromisso com a excelência na execução de obras complexas\n';
+            text += '  → Colabore com a equipe mantendo segurança, comprometimento e foco em resultados\n';
+            text += '  → Contribua para um ambiente saudável onde juventude e maturidade se entrelaçam\n';
+            text += '  → Seja agente da nossa missão: Executar os maiores projetos de infraestrutura do Brasil\n';
+            
+            return text;
+        }
+        
         function displayResults(data) {
             document.getElementById('testScreen').style.display = 'none';
             document.getElementById('resultsScreen').style.display = 'block';
             window.scrollTo(0, 0);
             
-            const {nivel, emoji} = getAderenciaClassification(data.aderenciaScore);
-            document.getElementById('aderenciaValue').textContent = data.aderenciaScore + '%';
-            document.getElementById('aderenciaEmoji').textContent = emoji;
-            document.getElementById('aderenciaDesc').textContent = nivel;
-            
-            renderProfile('naturalProfile', data.phase1Scores);
-            renderProfile('adaptedProfile', data.phase2Scores);
-            renderSuggestions(data.phase2Scores);
+            // Colaborador vê apenas a mensagem de sucesso
+            // Todos os detalhes (scores, perfis, sugestões) vão apenas por e-mail para o RH
         }
         
         function getAderenciaClassification(score) {
