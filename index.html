@@ -393,7 +393,7 @@
             display: none;
         }
         
-        /* Mensagem de sucesso (substitui aviso de baixa confiabilidade) */
+        /* Mensagem de sucesso */
         .success-message {
             background: #dcfce7;
             border-left: 4px solid #10b981;
@@ -417,169 +417,6 @@
             color: #15803d;
             line-height: 1.6;
             font-size: 16px;
-        }
-        
-        /* Classificação de Aderência */
-        .metrics-card {
-            background: linear-gradient(135deg, var(--azul-principal) 0%, var(--azul-escuro) 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        
-        .metric-value {
-            font-size: 64px;
-            font-weight: 900;
-            margin-bottom: 8px;
-        }
-        
-        .metric-label {
-            font-size: 20px;
-            font-weight: 700;
-            opacity: 0.95;
-        }
-        
-        .metric-description {
-            font-size: 16px;
-            opacity: 0.95;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .metric-emoji {
-            font-size: 24px;
-        }
-        
-        /* Perfis (SEM BOLINHAS) */
-        .profile-section {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            margin-bottom: 24px;
-        }
-        
-        .profile-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--azul-principal);
-            margin-bottom: 20px;
-        }
-        
-        .value-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        
-        .value-item:last-child {
-            border-bottom: none;
-        }
-        
-        .value-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #334155;
-            flex: 1;
-        }
-        
-        .value-bar-container {
-            flex: 1;
-            margin: 0 16px;
-        }
-        
-        .value-bar-bg {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .value-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        .value-percentage {
-            font-size: 14px;
-            font-weight: 700;
-            color: #334155;
-            min-width: 40px;
-            text-align: right;
-        }
-        
-        /* Sugestões */
-        .suggestions-section {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            margin-bottom: 24px;
-        }
-        
-        .suggestions-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--azul-principal);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .suggestion-card {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-        
-        .suggestion-card.warning {
-            border-left-color: var(--amarelo);
-            background: #fffbeb;
-        }
-        
-        .suggestion-card.danger {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-        }
-        
-        .suggestion-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--azul-principal);
-            margin-bottom: 12px;
-        }
-        
-        .suggestion-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .suggestion-list li {
-            padding: 8px 0 8px 24px;
-            position: relative;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #475569;
-        }
-        
-        .suggestion-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: #3b82f6;
-            font-weight: 700;
         }
         
         /* Rodapé */
@@ -650,7 +487,7 @@
                 <h2>📋 Sobre a Brasil Infra</h2>
                 <p>
                     A <strong>Brasil Infra</strong> é uma empresa comprometida com o desenvolvimento de infraestrutura 
-                    sustentável e inovadora no Brasil. Nossa missão é construir o progresso do país através de projetos 
+                    no Brasil. Nossa missão é construir o progresso do país através de projetos 
                     que transformam comunidades e geram valor para a sociedade.
                 </p>
                 <p>
@@ -751,9 +588,8 @@
             </div>
         </div>
         
-        <!-- TELA 3: Resultados - SIMPLIFICADA PARA O COLABORADOR -->
+        <!-- TELA 3: Resultados -->
         <div class="results-screen" id="resultsScreen">
-            <!-- Mensagem de Sucesso (ÚNICA coisa visível para o colaborador) -->
             <div class="success-message">
                 <h3>
                     <span>✅</span>
@@ -762,7 +598,6 @@
                 <p>O RH já recebeu seu resultado e entrará em contato em breve.</p>
             </div>
             
-            <!-- Rodapé -->
             <div class="footer">
                 <div class="footer-logo">BRASIL INFRA</div>
                 <div class="footer-tagline">Construindo Progresso com Você</div>
@@ -932,17 +767,130 @@
             }
         }
         
+        // NOVA FUNÇÃO: Gerar interpretação textual estilo DISC
+        function generateTextualInterpretation(phase1Selections, phase2Selections) {
+            // Pegar palavras mais selecionadas por valor
+            const phase1Words = getTopWordsByValue(phase1Selections, 3); // Top 3 por valor
+            const phase2Words = getTopWordsByValue(phase2Selections, 3);
+            
+            // Gerar texto interpretativo
+            let interpretation = {
+                perfilNatural: generatePerfilText(phase1Words, 'natural'),
+                perfilAdaptado: generatePerfilText(phase2Words, 'adaptado'),
+                palavrasChave: {
+                    fase1: extractKeywords(phase1Words),
+                    fase2: extractKeywords(phase2Words)
+                }
+            };
+            
+            return interpretation;
+        }
+        
+        function getTopWordsByValue(selections, topN = 3) {
+            const wordsByValue = {};
+            
+            // Agrupar palavras por valor
+            selections.forEach(index => {
+                const item = testState.currentWords[index];
+                if (!wordsByValue[item.value]) {
+                    wordsByValue[item.value] = [];
+                }
+                wordsByValue[item.value].push({
+                    word: item.word,
+                    valence: item.valence
+                });
+            });
+            
+            // Pegar top N palavras de cada valor
+            const topWords = {};
+            Object.keys(wordsByValue).forEach(value => {
+                topWords[value] = wordsByValue[value].slice(0, topN);
+            });
+            
+            return topWords;
+        }
+        
+        function generatePerfilText(wordsByValue, tipo) {
+            // Coletar todas as palavras positivas e negativas
+            let todasPositivas = [];
+            let todasNegativas = [];
+            let valoresFortes = [];
+            let valoresDesafio = [];
+            
+            Object.entries(wordsByValue).forEach(([value, words]) => {
+                const posWords = words.filter(w => w.valence === 'positive').map(w => w.word);
+                const negWords = words.filter(w => w.valence === 'negative').map(w => w.word);
+                
+                todasPositivas.push(...posWords);
+                todasNegativas.push(...negWords);
+                
+                // Identificar valores fortes (mais positivas que negativas)
+                if (posWords.length > negWords.length) {
+                    valoresFortes.push(value);
+                }
+                // Identificar valores de desafio (mais negativas que positivas)
+                else if (negWords.length > posWords.length) {
+                    valoresDesafio.push(value);
+                }
+            });
+            
+            // Limitar a 6 palavras mais relevantes
+            todasPositivas = todasPositivas.slice(0, 6);
+            todasNegativas = todasNegativas.slice(0, 6);
+            
+            // Construir texto resumido
+            let texto = '';
+            
+            if (tipo === 'natural') {
+                texto = '🧠 PERFIL NATURAL (Como a pessoa se vê):\n\n';
+            } else {
+                texto = '💼 PERFIL ADAPTADO (Como age no trabalho):\n\n';
+            }
+            
+            // Características predominantes
+            if (todasPositivas.length > 0) {
+                texto += `✅ Características Fortes: ${todasPositivas.join(', ')}\n\n`;
+            }
+            
+            if (todasNegativas.length > 0) {
+                texto += `⚠️ Pontos de Atenção: ${todasNegativas.join(', ')}\n\n`;
+            }
+            
+            // Valores culturais
+            if (valoresFortes.length > 0) {
+                texto += `🎯 Valores Alinhados: ${valoresFortes.join(', ')}\n`;
+            }
+            
+            if (valoresDesafio.length > 0) {
+                texto += `🔧 Valores que Requerem Desenvolvimento: ${valoresDesafio.join(', ')}`;
+            }
+            
+            return texto;
+        }
+        
+        function extractKeywords(wordsByValue) {
+            const allWords = [];
+            Object.values(wordsByValue).forEach(words => {
+                words.forEach(w => allWords.push(w.word));
+            });
+            return allWords.join(', ');
+        }
+        
         function calculateResults() {
             const totalTime = Math.floor((Date.now() - testState.startTime) / 1000);
             
             const phase1Scores = calculateScoresByValue(testState.phase1Selections);
             const phase2Scores = calculateScoresByValue(testState.phase2Selections);
             
-            // Calcular porcentagens de palavras positivas e negativas
             const phase1Details = calculateWordPercentages(testState.phase1Selections);
             const phase2Details = calculateWordPercentages(testState.phase2Selections);
             
-            // Calcular métricas de validação (apenas para e-mail)
+            // NOVO: Gerar interpretação textual
+            const textualInterpretation = generateTextualInterpretation(
+                testState.phase1Selections,
+                testState.phase2Selections
+            );
+            
             const metricas = calculateValidationMetrics(
                 testState.phase1Selections, 
                 testState.phase2Selections, 
@@ -953,7 +901,7 @@
                 Object.values(phase2Scores).reduce((a, b) => a + b, 0) / 5
             );
             
-            const isReliable = totalTime >= 138; // 2.30 minutos = 138 segundos
+            const isReliable = totalTime >= 138;
             
             // Enviar para Formspree
             sendToFormspree({
@@ -965,6 +913,7 @@
                 phase2Scores,
                 phase1Details,
                 phase2Details,
+                textualInterpretation,  // NOVO
                 metricas,
                 isReliable
             });
@@ -981,7 +930,7 @@
         function calculateValidationMetrics(phase1Selections, phase2Selections, totalTime) {
             const allSelections = [...phase1Selections, ...phase2Selections];
             
-            // 1. Desejabilidade Social - % de palavras positivas no total
+            // 1. Desejabilidade Social
             let totalPositivas = 0;
             let totalNegativas = 0;
             
@@ -995,10 +944,15 @@
             const desejabilidadeSocial = Math.round((totalPositivas / totalPalavras) * 100);
             
             let desejabilidadeNivel = 'Normal';
-            if (desejabilidadeSocial > 85) desejabilidadeNivel = 'Alta';
-            else if (desejabilidadeSocial < 30) desejabilidadeNivel = 'Baixa';
+            let desejabilidadeAlerta = false;
+            if (desejabilidadeSocial > 85) {
+                desejabilidadeNivel = 'ALTA - Possível manipulação por desejabilidade social';
+                desejabilidadeAlerta = true;
+            } else if (desejabilidadeSocial < 30) {
+                desejabilidadeNivel = 'Baixa';
+            }
             
-            // 2. Inconsistências - diferença entre valores similares nas duas fases
+            // 2. Inconsistências
             const inconsistencias = [];
             Object.keys(VALUES).forEach(value => {
                 const diff = Math.abs(
@@ -1010,7 +964,7 @@
                 }
             });
             
-            // 3. Respostas Extremas - conta quantas pessoas escolheram só positivas ou só negativas
+            // 3. Respostas Extremas
             let valoresExtremos = 0;
             Object.keys(VALUES).forEach(value => {
                 const details = calculateWordPercentages(phase2Selections)[value];
@@ -1021,30 +975,37 @@
             
             const respostasExtremas = Math.round((valoresExtremos / 5) * 100);
             let extremasNivel = 'Normal';
-            if (respostasExtremas > 60) extremasNivel = 'Excesso de extremos';
+            let extremasAlerta = false;
+            if (respostasExtremas > 60) {
+                extremasNivel = 'ALTA - Excesso de polarização nas respostas';
+                extremasAlerta = true;
+            }
             
-            // 4. Tempo Total - conforme nova tabela de parâmetros
+            // 4. Tempo Total
             const minutos = totalTime / 60;
             let tempoNivel = '';
             let tempoClassificacao = '';
             let tempoInterpretacao = '';
             let tempoAcao = '';
+            let tempoAlerta = false;
             
             if (minutos < 2.30) {
                 tempoNivel = 'MUITO RÁPIDO';
                 tempoClassificacao = '⚠️';
                 tempoInterpretacao = 'Respostas automáticas sem reflexão';
-                tempoAcao = 'Rejeitar ou reaplicar teste';
+                tempoAcao = 'REJEITAR ou REAPLICAR teste';
+                tempoAlerta = true;
             } else if (minutos >= 2.30 && minutos < 4) {
                 tempoNivel = 'RÁPIDO';
                 tempoClassificacao = '⚠️';
                 tempoInterpretacao = 'Possível falta de atenção';
-                tempoAcao = 'Analisar com cautela';
+                tempoAcao = 'Analisar com CAUTELA';
+                tempoAlerta = true;
             } else if (minutos >= 4 && minutos <= 5) {
                 tempoNivel = 'IDEAL';
                 tempoClassificacao = '✅';
                 tempoInterpretacao = 'Tempo adequado de reflexão';
-                tempoAcao = 'Resultado confiável';
+                tempoAcao = 'Resultado CONFIÁVEL';
             } else if (minutos > 5 && minutos <= 6.30) {
                 tempoNivel = 'LENTO';
                 tempoClassificacao = '⚠️';
@@ -1054,62 +1015,65 @@
                 tempoNivel = 'MUITO LENTO';
                 tempoClassificacao = '⚠️';
                 tempoInterpretacao = 'Possível distração ou dificuldade';
-                tempoAcao = 'Considerar reaplicação';
+                tempoAcao = 'Considerar REAPLICAÇÃO';
+                tempoAlerta = true;
             }
             
-            const tempoScore = minutos >= 4 && minutos <= 5 ? 1.00 : Math.round((minutos / 4.5) * 100) / 100;
-            
-            // 5. Variação de Respostas - verifica se há diversidade
+            // 5. Variação de Respostas
             const scoresArray = Object.values(calculateScoresByValue(phase2Selections));
             const media = scoresArray.reduce((a, b) => a + b, 0) / scoresArray.length;
             const variancia = scoresArray.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / scoresArray.length;
             const desvioPadrao = Math.sqrt(variancia);
             
-            const variacaoScore = (desvioPadrao / 100).toFixed(2);
             let variacaoNivel = 'Normal';
-            if (desvioPadrao < 5) variacaoNivel = 'Muito uniforme';
-            else if (desvioPadrao > 30) variacaoNivel = 'Muito variada';
+            let variacaoAlerta = false;
+            if (desvioPadrao < 5) {
+                variacaoNivel = 'MUITO UNIFORME - Possível resposta automática';
+                variacaoAlerta = true;
+            } else if (desvioPadrao > 30) {
+                variacaoNivel = 'Muito variada';
+            }
             
             // Pontos de Atenção
             const pontosAtencao = [];
             
-            if (desejabilidadeSocial > 85) {
-                pontosAtencao.push('Alta desejabilidade social - possível tendência a respostas socialmente aceitáveis');
+            if (desejabilidadeAlerta) {
+                pontosAtencao.push('🚨 DESEJABILIDADE SOCIAL ALTA - Candidato pode estar tentando "parecer perfeito"');
             }
             if (inconsistencias.length > 0) {
-                pontosAtencao.push(`Inconsistências detectadas entre respostas contraditórias - possível falta de sinceridade ou atenção`);
+                pontosAtencao.push(`⚠️ INCONSISTÊNCIAS: ${inconsistencias.join(', ')}`);
             }
-            if (respostasExtremas > 60) {
-                pontosAtencao.push('Excesso de respostas extremas (1 ou 5) - possível polarização nas respostas');
+            if (extremasAlerta) {
+                pontosAtencao.push('🚨 RESPOSTAS EXTREMAS - Padrão polarizado pode indicar falta de sinceridade');
             }
-            if (minutos < 2.30) {
-                pontosAtencao.push(`Tempo MUITO RÁPIDO (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
-            } else if (minutos >= 2.30 && minutos < 4) {
-                pontosAtencao.push(`Tempo RÁPIDO (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
-            } else if (minutos > 6.30) {
-                pontosAtencao.push(`Tempo MUITO LENTO (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
+            if (tempoAlerta) {
+                pontosAtencao.push(`🚨 TEMPO ${tempoNivel} (${minutos.toFixed(2)}min) - ${tempoInterpretacao}`);
             }
-            if (desvioPadrao < 5) {
-                pontosAtencao.push('Padrão de respostas muito uniforme - possível resposta automática ou desatenta');
+            if (variacaoAlerta) {
+                pontosAtencao.push('🚨 PADRÃO UNIFORME - Respostas muito similares podem indicar desatenção');
             }
             
-            // Recomendação baseada nos novos parâmetros
-            let recomendacao = 'Resultado confiável. Prosseguir com análise dos valores culturais.';
+            // Recomendação FINAL
+            let recomendacao = '';
+            const alertasGraves = [desejabilidadeAlerta, extremasAlerta, tempoAlerta, variacaoAlerta].filter(Boolean).length;
             
             if (minutos < 2.30) {
-                recomendacao = 'Resultado NÃO CONFIÁVEL - Tempo muito rápido. REJEITAR ou REAPLICAR teste.';
-            } else if (minutos > 6.30) {
-                recomendacao = 'Resultado com ressalvas - Tempo muito lento. Considerar REAPLICAÇÃO.';
-            } else if (pontosAtencao.length > 2) {
-                recomendacao = 'Resultado com ressalvas. Analisar com CAUTELA e considerar entrevista complementar.';
+                recomendacao = '🔴 RESULTADO NÃO CONFIÁVEL - REJEITAR ou REAPLICAR teste obrigatoriamente.';
+            } else if (alertasGraves >= 3) {
+                recomendacao = '🔴 RESULTADO ALTAMENTE SUSPEITO - Múltiplos indicadores de manipulação. CONSIDERAR REJEIÇÃO.';
+            } else if (alertasGraves >= 2) {
+                recomendacao = '🟡 RESULTADO COM RESSALVAS - Analisar com EXTREMA CAUTELA. Entrevista complementar OBRIGATÓRIA.';
             } else if (minutos >= 4 && minutos <= 5 && pontosAtencao.length === 0) {
-                recomendacao = 'Resultado IDEAL e CONFIÁVEL. Tempo adequado de reflexão. Prosseguir normalmente.';
+                recomendacao = '🟢 RESULTADO CONFIÁVEL - Tempo ideal e sem alertas. Prosseguir normalmente com análise cultural.';
+            } else {
+                recomendacao = '🟡 RESULTADO ACEITÁVEL - Prosseguir com análise, mas considerar entrevista complementar.';
             }
             
             return {
                 desejabilidadeSocial: {
                     percentual: `${desejabilidadeSocial}%`,
-                    nivel: desejabilidadeNivel
+                    nivel: desejabilidadeNivel,
+                    alerta: desejabilidadeAlerta
                 },
                 inconsistencias: {
                     quantidade: inconsistencias.length,
@@ -1117,22 +1081,25 @@
                 },
                 respostasExtremas: {
                     percentual: `${respostasExtremas}%`,
-                    nivel: extremasNivel
+                    nivel: extremasNivel,
+                    alerta: extremasAlerta
                 },
                 tempoTotal: {
                     minutos: minutos.toFixed(2),
-                    score: tempoScore,
                     nivel: tempoNivel,
                     classificacao: tempoClassificacao,
                     interpretacao: tempoInterpretacao,
-                    acao: tempoAcao
+                    acao: tempoAcao,
+                    alerta: tempoAlerta
                 },
                 variacaoRespostas: {
-                    score: variacaoScore,
-                    nivel: variacaoNivel
+                    desvioPadrao: desvioPadrao.toFixed(2),
+                    nivel: variacaoNivel,
+                    alerta: variacaoAlerta
                 },
-                pontosAtencao: pontosAtencao.length > 0 ? pontosAtencao.join(' | ') : 'Nenhum ponto de atenção',
-                recomendacao: recomendacao
+                pontosAtencao: pontosAtencao.length > 0 ? pontosAtencao.join('\n') : 'Nenhum ponto de atenção',
+                recomendacao: recomendacao,
+                alertasGraves: alertasGraves
             };
         }
         
@@ -1161,7 +1128,6 @@
                 }
             });
             
-            // Calcular porcentagens
             Object.keys(details).forEach(value => {
                 const total = details[value].totalSelecionadas;
                 if (total > 0) {
@@ -1198,51 +1164,118 @@
             return scores;
         }
         
-        // Enviar para Formspree - DADOS COMPLETOS PARA O RH
         async function sendToFormspree(data) {
             const minutes = Math.floor(data.tempoTotal / 60);
             const seconds = data.tempoTotal % 60;
             
-            // Calcular classificação de aderência
             const {nivel, emoji} = getAderenciaClassification(data.aderenciaScore);
-            
-            // Gerar sugestões personalizadas em texto
-            const sugestoes = generateSuggestionsText(data.phase2Scores);
             
             const formData = {
                 nome: data.nome,
                 cpf: data.cpf,
-                data: new Date().toLocaleString('pt-BR'),
+                dataHora: new Date().toLocaleString('pt-BR'),
                 tempoTotal: `${minutes}min ${seconds}s`,
                 
-                // RESULTADO PRINCIPAL
-                aderenciaCultural: {
-                    score: `${data.aderenciaScore}%`,
-                    classificacao: `${emoji} ${nivel}`,
-                    nivel: getAderenciaLevel(data.aderenciaScore)
-                },
+                // ═══════════════════════════════════════
+                // SCORE GERAL DE ADERÊNCIA CULTURAL
+                // ═══════════════════════════════════════
+                scoreGeral: `${data.aderenciaScore}% - ${nivel}`,
+                classificacao: `${emoji} ${nivel}`,
                 
-                // Confiabilidade
+                // ═══════════════════════════════════════
+                // CONFIABILIDADE DO RESULTADO
+                // ═══════════════════════════════════════
                 confiabilidade: {
-                    nivel: data.isReliable ? 'Alta Confiabilidade' : 'Baixa Confiabilidade',
-                    score: data.aderenciaScore
+                    nivel: data.isReliable ? '✅ Alta Confiabilidade' : '⚠️ Baixa Confiabilidade',
+                    tempoResposta: `${minutes}min ${seconds}s`,
+                    status: data.metricas.tempoTotal.classificacao + ' ' + data.metricas.tempoTotal.nivel
                 },
                 
-                // Métricas de Validação (APENAS E-MAIL)
+                // ═══════════════════════════════════════
+                // MÉTRICAS DE VALIDAÇÃO ANTI-MANIPULAÇÃO
+                // ═══════════════════════════════════════
+                // Explicação: Indicadores que ajudam a identificar se o candidato respondeu com sinceridade
+                
                 metricas: {
+                    // 1. DESEJABILIDADE SOCIAL
+                    // O que é: Tendência de escolher apenas respostas "socialmente aceitáveis" para parecer perfeito
+                    // Como funciona: Mede % de palavras POSITIVAS vs NEGATIVAS escolhidas
+                    // Ideal: 50-85% de palavras positivas (equilíbrio entre autoconfiança e autocrítica)
+                    // Alerta: Acima de 85% = possível manipulação (pessoa quer "parecer perfeita")
                     desejabilidadeSocial: `${data.metricas.desejabilidadeSocial.percentual} - ${data.metricas.desejabilidadeSocial.nivel}`,
-                    inconsistencias: `${data.metricas.inconsistencias.quantidade} - ${data.metricas.inconsistencias.detalhes}`,
+                    desejabilidadeExplicacao: 'Mede se o candidato escolheu apenas palavras positivas para "parecer perfeito"',
+                    
+                    // 2. INCONSISTÊNCIAS ENTRE RESPOSTAS
+                    // O que é: Contradições entre o que a pessoa disse ser (Fase 1) e como age (Fase 2)
+                    // Como funciona: Compara diferenças grandes (>40%) nos mesmos valores entre as duas fases
+                    // Ideal: Diferenças menores que 40% (coerência entre ser e agir)
+                    // Alerta: Diferenças acima de 40% = possível falta de sinceridade ou autoconhecimento
+                    inconsistencias: `${data.metricas.inconsistencias.quantidade} inconsistências - ${data.metricas.inconsistencias.detalhes}`,
+                    inconsistenciasExplicacao: 'Verifica contradições entre como a pessoa se vê (Fase 1) e como age (Fase 2)',
+                    
+                    // 3. RESPOSTAS EXTREMAS (Polarização)
+                    // O que é: Escolher APENAS palavras muito positivas OU muito negativas para um valor
+                    // Como funciona: Conta quantos valores tiveram 100% de um tipo de palavra
+                    // Ideal: 0-40% de valores extremos (pessoa demonstra nuances)
+                    // Alerta: Acima de 60% = pensamento polarizado "tudo ou nada" ou falta de reflexão
                     respostasExtremas: `${data.metricas.respostasExtremas.percentual} - ${data.metricas.respostasExtremas.nivel}`,
+                    extremasExplicacao: 'Identifica se o candidato pensou de forma polarizada (tudo ou nada) sem nuances',
+                    
+                    // 4. TEMPO DE RESPOSTA
+                    // O que é: Tempo total para completar o teste
+                    // Como funciona: Mede se a pessoa refletiu adequadamente sobre cada palavra
+                    // Ideal: 4-5 minutos (tempo de reflexão adequado)
+                    // Alerta: Menos de 2:30min = respostas automáticas | Mais de 6:30min = indecisão excessiva
                     tempoTotal: `${data.metricas.tempoTotal.minutos}min - ${data.metricas.tempoTotal.classificacao} ${data.metricas.tempoTotal.nivel}`,
                     tempoInterpretacao: data.metricas.tempoTotal.interpretacao,
                     tempoAcao: data.metricas.tempoTotal.acao,
-                    variacaoRespostas: `${data.metricas.variacaoRespostas.score} - ${data.metricas.variacaoRespostas.nivel}`
+                    tempoExplicacao: 'Avalia se houve tempo suficiente para reflexão genuína (muito rápido = automático)',
+                    
+                    // 5. VARIAÇÃO DE RESPOSTAS
+                    // O que é: Diversidade nas respostas entre os 5 valores culturais
+                    // Como funciona: Calcula desvio padrão dos scores (se são muito parecidos ou variados)
+                    // Ideal: Desvio entre 5-30 (mostra que a pessoa tem perfil único, não genérico)
+                    // Alerta: Desvio menor que 5 = respostas muito uniformes (possível desatenção)
+                    variacaoRespostas: `Desvio padrão: ${data.metricas.variacaoRespostas.desvioPadrao} - ${data.metricas.variacaoRespostas.nivel}`,
+                    variacaoExplicacao: 'Verifica se há diversidade nas respostas ou padrão automático muito uniforme'
                 },
                 
+                // ═══════════════════════════════════════
+                // PONTOS DE ATENÇÃO E ALERTAS
+                // ═══════════════════════════════════════
                 pontosAtencao: data.metricas.pontosAtencao,
+                
+                // ═══════════════════════════════════════
+                // RECOMENDAÇÃO FINAL DO SISTEMA
+                // ═══════════════════════════════════════
                 recomendacao: data.metricas.recomendacao,
                 
-                // PERFIL NATURAL - Fase 1 (Quem você é)
+                // ═══════════════════════════════════════
+                // ALERTAS DE MANIPULAÇÃO (Resumo Visual)
+                // ═══════════════════════════════════════
+                alertasManipulacao: {
+                    nivelRisco: data.metricas.alertasGraves >= 3 ? '🔴 ALTO RISCO' : 
+                               data.metricas.alertasGraves >= 2 ? '🟡 RISCO MODERADO' : '🟢 BAIXO RISCO',
+                    quantidadeAlertas: data.metricas.alertasGraves,
+                    desejabilidadeSocial: data.metricas.desejabilidadeSocial.alerta ? '🚨 ALERTA' : '✅ OK',
+                    respostasExtremas: data.metricas.respostasExtremas.alerta ? '🚨 ALERTA' : '✅ OK',
+                    tempo: data.metricas.tempoTotal.alerta ? '🚨 ALERTA' : '✅ OK',
+                    padraoUniforme: data.metricas.variacaoRespostas.alerta ? '🚨 ALERTA' : '✅ OK'
+                },
+                
+                // ═══════════════════════════════════════
+                // INTERPRETAÇÃO TEXTUAL (Estilo DISC)
+                // ═══════════════════════════════════════
+                interpretacaoTextual: {
+                    perfilNatural: data.textualInterpretation.perfilNatural,
+                    perfilAdaptado: data.textualInterpretation.perfilAdaptado,
+                    palavrasChaveFase1: data.textualInterpretation.palavrasChave.fase1,
+                    palavrasChaveFase2: data.textualInterpretation.palavrasChave.fase2
+                },
+                
+                // ═══════════════════════════════════════
+                // PERFIL NATURAL (FASE 1)
+                // ═══════════════════════════════════════
                 perfilNatural: {
                     comprometimento: {
                         score: `${data.phase1Scores['Comprometimento']}%`,
@@ -1271,7 +1304,9 @@
                     }
                 },
                 
-                // PERFIL ADAPTADO - Fase 2 (Como você age)
+                // ═══════════════════════════════════════
+                // PERFIL ADAPTADO (FASE 2)
+                // ═══════════════════════════════════════
                 perfilAdaptado: {
                     comprometimento: {
                         score: `${data.phase2Scores['Comprometimento']}%`,
@@ -1300,9 +1335,6 @@
                     }
                 },
                 
-                // SUGESTÕES PERSONALIZADAS
-                sugestoesPersonalizadas: sugestoes,
-                
                 _replyto: 'rhbrasilinfra@gmail.com'
             };
             
@@ -1319,39 +1351,10 @@
             }
         }
         
-        // Gerar texto das sugestões para o e-mail
-        function generateSuggestionsText(scores) {
-            let text = '';
-            
-            // Sugestões de melhoria (para valores < 61%)
-            Object.entries(scores).forEach(([value, score]) => {
-                if (score < 61) {
-                    const level = score >= 41 ? 'Requer Atenção' : 'Crítico';
-                    const emoji = score >= 41 ? '⚠️' : '❌';
-                    text += `\n${emoji} ${value} (${score}% - ${level}):\n`;
-                    const suggestions = getSuggestionsForValue(value);
-                    suggestions.forEach(s => text += `  → ${s}\n`);
-                }
-            });
-            
-            // Sugestões de continuidade (para todos)
-            text += '\n✅ Continue Alinhado com Nossa Cultura:\n';
-            text += '  → Participe ativamente de projetos que ergam histórias e construam o futuro do Brasil\n';
-            text += '  → Mantenha o compromisso com a excelência na execução de obras complexas\n';
-            text += '  → Colabore com a equipe mantendo segurança, comprometimento e foco em resultados\n';
-            text += '  → Contribua para um ambiente saudável onde juventude e maturidade se entrelaçam\n';
-            text += '  → Seja agente da nossa missão: Executar os maiores projetos de infraestrutura do Brasil\n';
-            
-            return text;
-        }
-        
         function displayResults(data) {
             document.getElementById('testScreen').style.display = 'none';
             document.getElementById('resultsScreen').style.display = 'block';
             window.scrollTo(0, 0);
-            
-            // Colaborador vê apenas a mensagem de sucesso
-            // Todos os detalhes (scores, perfis, sugestões) vão apenas por e-mail para o RH
         }
         
         function getAderenciaClassification(score) {
@@ -1362,113 +1365,7 @@
             return { nivel: 'Associação Negativa', emoji: '⚫' };
         }
         
-        function getAderenciaLevel(score) {
-            if (score > 81) return 'Forte Aderência';
-            if (score >= 61) return 'Aderência Moderada';
-            if (score >= 41) return 'Aderência Leve';
-            if (score >= 21) return 'Aderência Neutra';
-            return 'Associação Negativa';
-        }
-        
-        function renderProfile(elementId, scores) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = '';
-            
-            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-            
-            sorted.forEach(([value, score]) => {
-                const color = VALUES[value];
-                container.innerHTML += `
-                    <div class="value-item">
-                        <div class="value-name">${value}</div>
-                        <div class="value-bar-container">
-                            <div class="value-bar-bg">
-                                <div class="value-bar-fill" style="width: ${score}%; background: ${color};"></div>
-                            </div>
-                        </div>
-                        <div class="value-percentage">${score}%</div>
-                    </div>
-                `;
-            });
-        }
-        
-        function renderSuggestions(scores) {
-            const container = document.getElementById('suggestionsContainer');
-            container.innerHTML = '';
-            
-            let hasLowScores = false;
-            
-            // Primeiro mostrar valores que precisam de atenção
-            Object.entries(scores).forEach(([value, score]) => {
-                if (score < 61) {
-                    hasLowScores = true;
-                    const cssClass = score >= 41 ? 'warning' : 'danger';
-                    const emoji = score >= 41 ? '⚠️' : '❌';
-                    const level = score >= 41 ? 'Requer Atenção' : 'Crítico';
-                    
-                    container.innerHTML += `
-                        <div class="suggestion-card ${cssClass}">
-                            <div class="suggestion-value">${emoji} ${value} (${score}% - ${level})</div>
-                            <ul class="suggestion-list">
-                                ${getSuggestionsForValue(value, 'improve').map(s => `<li>${s}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
-            });
-            
-            // Sempre mostrar sugestões de continuidade da cultura
-            container.innerHTML += `
-                <div class="suggestion-card" style="border-left-color: #10b981; background: #f0fdf4;">
-                    <div class="suggestion-value" style="color: #166534;">✅ Continue Alinhado com Nossa Cultura</div>
-                    <ul class="suggestion-list">
-                        <li>Participe ativamente de projetos que ergam histórias e construam o futuro do Brasil</li>
-                        <li>Mantenha o compromisso com a excelência na execução de obras complexas</li>
-                        <li>Colabore com a equipe mantendo segurança, comprometimento e foco em resultados</li>
-                        <li>Contribua para um ambiente saudável onde juventude e maturidade se entrelaçam</li>
-                        <li>Seja agente da nossa missão: Executar os maiores projetos de infraestrutura do Brasil</li>
-                    </ul>
-                </div>
-            `;
-        }
-        
-        function getSuggestionsForValue(value, type) {
-            const suggestions = {
-                'Comprometimento': [
-                    'Alinhe seus objetivos pessoais com a missão de construir o progresso do Brasil',
-                    'Demonstre mais engajamento nas entregas e prazos do projeto',
-                    'Participe ativamente das reuniões e decisões da equipe'
-                ],
-                'Trabalho Seguro': [
-                    'Priorize SEMPRE a segurança acima de prazos e custos',
-                    'Utilize todos os EPIs obrigatórios em todas as atividades',
-                    'Participe dos treinamentos de segurança e DDS',
-                    'Reporte imediatamente qualquer situação de risco'
-                ],
-                'Ambiente Saudável': [
-                    'Pratique mais escuta ativa e empatia com colegas',
-                    'Contribua para um ambiente onde juventude e maturidade se entrelaçam',
-                    'Participe das integrações e confraternizações da equipe',
-                    'Demonstre respeito e colaboração em todas as interações'
-                ],
-                'Foco no Resultado': [
-                    'Estabeleça metas claras e mensuráveis para suas entregas',
-                    'Organize melhor seu tempo priorizando o que gera mais valor',
-                    'Busque sempre a satisfação do cliente nas obras entregues',
-                    'Mantenha o compromisso com prazos e qualidade'
-                ],
-                'Mentalidade de Crescimento': [
-                    'Reserve tempo para desenvolvimento profissional contínuo',
-                    'Busque feedback regularmente e aplique melhorias',
-                    'Demonstre abertura para aprender novas técnicas e processos',
-                    'Encare desafios como oportunidades de crescimento'
-                ]
-            };
-            
-            return suggestions[value] || ['Continue se desenvolvendo neste valor'];
-        }
-        
-        console.log('Sistema Brasil Infra carregado!');
+        console.log('Sistema Brasil Infra carregado - Versão com Interpretação Textual e Anti-Manipulação!');
     </script>
 </body>
 </html>
