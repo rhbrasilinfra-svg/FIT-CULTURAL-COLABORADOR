@@ -326,11 +326,48 @@
             font-weight: 800;
         }
         
+        .phase-subtitle {
+            color: var(--amarelo);
+            font-size: 20px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
         .phase-description {
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 0;
             line-height: 1.6;
             font-size: 16px;
+        }
+        
+        /* Indicador de Progresso */
+        .progress-indicator {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--azul-principal), var(--amarelo));
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--azul-principal);
         }
         
         .selection-info {
@@ -496,7 +533,7 @@
                 <div class="values-grid">
                     <div class="value-badge">💪 Comprometimento</div>
                     <div class="value-badge">🦺 Trabalho Seguro</div>
-                    <div class="value-badge">🌱 Ambiente Saudável</div>
+                    <div class="value-badge">🤝 Ambiente Saudável</div>
                     <div class="value-badge">🎯 Foco no Resultado</div>
                     <div class="value-badge">🚀 Mentalidade de Crescimento</div>
                 </div>
@@ -531,13 +568,14 @@
             <div class="warning-box">
                 <h3>⏱️ Instruções Importantes</h3>
                 <ul>
-                    <li>Reserve pelo menos <strong>4-5 minutos</strong> para completar o teste</li>
+                    <li>Reserve pelo menos <strong>4-6 minutos</strong> para completar o teste</li>
+                    <li>O teste possui <strong>4 etapas sequenciais</strong> que avaliam diferentes aspectos</li>
+                    <li>Em cada etapa, você escolherá <strong>12 a 15 palavras</strong> de um conjunto de 30</li>
                     <li>Leia cada palavra com atenção e reflita sobre seu significado</li>
-                    <li>Escolha as palavras que melhor representam você (Fase 1) e como você age no trabalho (Fase 2)</li>
-                    <li>Não há respostas certas ou erradas, seja honesto e genuíno</li>
+                    <li>Não há respostas certas ou erradas, seja honesto e autêntico</li>
                 </ul>
                 <div class="highlight">
-                    ⏰ Tempo ideal: 4-5 minutos
+                    ⏰ Tempo ideal: 4-6 minutos | 📊 4 Etapas | 🎯 12-15 palavras por etapa
                 </div>
             </div>
             
@@ -565,10 +603,19 @@
         <!-- TELA 2: Teste -->
         <div class="test-screen" id="testScreen">
             <div class="phase-card">
+                <!-- Indicador de Progresso -->
+                <div class="progress-indicator">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Etapa 1 de 4</div>
+                </div>
+                
                 <div class="phase-header">
                     <h2 class="phase-title" id="phaseTitle">Fase 1: Perfil Natural</h2>
+                    <h3 class="phase-subtitle" id="phaseSubtitle">Parte 1 de 2</h3>
                     <p class="phase-description" id="phaseDescription">
-                        Escolha entre 10 e 20 palavras que melhor descrevem <strong>quem você é naturalmente</strong>, 
+                        Escolha entre <strong>12 e 15 palavras</strong> que melhor descrevem <strong>quem você é naturalmente</strong>, 
                         sem pensar no ambiente de trabalho. Seja genuíno.
                     </p>
                 </div>
@@ -576,14 +623,14 @@
                 <div class="selection-info">
                     <div class="selection-counter">
                         <span class="current" id="selectionCount">0</span>
-                        <span class="required"> / 10-20 palavras selecionadas</span>
+                        <span class="required" id="selectionRange"> / 12-15 palavras selecionadas</span>
                     </div>
                 </div>
                 
                 <div class="words-grid" id="wordsGrid"></div>
                 
-                <button class="btn" id="nextBtn" onclick="nextPhase()" disabled>
-                    Próxima Fase
+                <button class="btn" id="nextBtn" onclick="nextBlock()" disabled>
+                    Próxima Etapa
                 </button>
             </div>
         </div>
@@ -617,11 +664,11 @@
         const WORDS_DATABASE = {
             'Comprometimento': {
                 positive: ['Dedicado', 'Responsável', 'Engajado', 'Leal', 'Confiável', 'Pontual', 'Presente', 'Persistente', 'Focado'],
-                negative: ['Descompromissado', 'Negligente', 'Desinteressado', 'Ausente', 'Inconsistente', 'Irregular', 'Disperso', 'Inconstante']
+                negative: ['Descompromissado', 'Volúvel', 'Desinteressado', 'Ausente', 'Inconsistente', 'Irregular', 'Relapso', 'Inconstante']
             },
             'Trabalho Seguro': {
                 positive: ['Cauteloso', 'Precavido', 'Atento', 'Cuidadoso', 'Vigilante', 'Consciente', 'Prudente', 'Criterioso', 'Protetor'],
-                negative: ['Descuidado', 'Imprudente', 'Negligente', 'Arriscado', 'Inconsequente', 'Irresponsável', 'Temerário', 'Desatento']
+                negative: ['Descuidado', 'Imprudente', 'Impulsivo', 'Arriscado', 'Inconsequente', 'Irresponsável', 'Perigoso', 'Desatento']
             },
             'Ambiente Saudável': {
                 positive: ['Colaborativo', 'Empático', 'Respeitoso', 'Amigável', 'Harmonioso', 'Solidário', 'Gentil', 'Acolhedor', 'Positivo'],
@@ -629,7 +676,7 @@
             },
             'Foco no Resultado': {
                 positive: ['Produtivo', 'Determinado', 'Objetivo', 'Eficiente', 'Orientado', 'Realizador', 'Incisivo', 'Competitivo', 'Ambicioso'],
-                negative: ['Improdutivo', 'Procrastinador', 'Disperso', 'Lento', 'Desorganizado', 'Ineficiente', 'Acomodado', 'Negligente']
+                negative: ['Improdutivo', 'Procrastinador', 'Indeciso', 'Lento', 'Desorganizado', 'Ineficiente', 'Acomodado', 'Impreciso']
             },
             'Mentalidade de Crescimento': {
                 positive: ['Curioso', 'Aprendiz', 'Adaptável', 'Inovador', 'Flexível', 'Aberto', 'Proativo', 'Evolutivo', 'Criativo'],
@@ -641,9 +688,18 @@
             nome: '',
             cpf: '',
             startTime: null,
-            phase: 1,
-            phase1Selections: [],
-            phase2Selections: [],
+            currentBlock: 1,
+            
+            block1Selections: [],
+            block2Selections: [],
+            block3Selections: [],
+            block4Selections: [],
+            
+            block1Words: [],
+            block2Words: [],
+            block3Words: [],
+            block4Words: [],
+            
             currentWords: []
         };
         
@@ -658,7 +714,6 @@
             }
         });
         
-        // Habilitar botão
         function checkFormValidity() {
             const nome = document.getElementById('nomeInput').value.trim();
             const cpf = document.getElementById('cpfInput').value.trim();
@@ -680,41 +735,162 @@
             document.getElementById('testScreen').style.display = 'block';
             window.scrollTo(0, 0);
             
-            loadPhase1();
+            loadBlock1();
         }
         
-        function generateWords() {
-            let allWords = [];
-            Object.keys(WORDS_DATABASE).forEach(value => {
-                WORDS_DATABASE[value].positive.forEach(word => {
-                    allWords.push({ word, value, valence: 'positive' });
+        // NOVA FUNÇÃO: Gerar 30 palavras balanceadas (6 por valor: 3 pos + 3 neg)
+        // NOVA FUNÇÃO: Gerar par de blocos com palavras ÚNICAS usando TODO o banco
+        function generatePairOfBlocks(useFaseAlt = false) {
+            const allPositives = {};
+            const allNegatives = {};
+            
+            // Coletar e embaralhar todas as palavras por valor
+            Object.keys(VALUES).forEach(value => {
+                allPositives[value] = [...WORDS_DATABASE[value].positive].sort(() => Math.random() - 0.5);
+                allNegatives[value] = [...WORDS_DATABASE[value].negative].sort(() => Math.random() - 0.5);
+            });
+            
+            // Bloco 1: primeiras 3 positivas + 3 negativas de cada valor
+            const block1 = [];
+            Object.keys(VALUES).forEach(value => {
+                for (let i = 0; i < 3; i++) {
+                    if (allPositives[value][i]) {
+                        block1.push({ word: allPositives[value][i], value, valence: 'positive' });
+                    }
+                }
+                for (let i = 0; i < 3; i++) {
+                    if (allNegatives[value][i]) {
+                        block1.push({ word: allNegatives[value][i], value, valence: 'negative' });
+                    }
+                }
+            });
+            
+            // Bloco 2: próximas 3 positivas + 3 negativas de cada valor (DIFERENTES!)
+            const block2 = [];
+            Object.keys(VALUES).forEach(value => {
+                for (let i = 3; i < 6; i++) {
+                    if (allPositives[value][i]) {
+                        block2.push({ word: allPositives[value][i], value, valence: 'positive' });
+                    }
+                }
+                for (let i = 3; i < 6; i++) {
+                    if (allNegatives[value][i]) {
+                        block2.push({ word: allNegatives[value][i], value, valence: 'negative' });
+                    }
+                }
+            });
+            
+            return {
+                block1: block1.sort(() => Math.random() - 0.5),
+                block2: block2.sort(() => Math.random() - 0.5)
+            };
+        }
+        
+        function generateBalancedWords() {
+            const balancedWords = [];
+            
+            Object.keys(VALUES).forEach(value => {
+                // Pegar 3 positivas aleatórias
+                const positives = [...WORDS_DATABASE[value].positive]
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+                
+                // Pegar 3 negativas aleatórias
+                const negatives = [...WORDS_DATABASE[value].negative]
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+                
+                // Adicionar ao array
+                positives.forEach(word => {
+                    balancedWords.push({ word, value, valence: 'positive' });
                 });
-                WORDS_DATABASE[value].negative.forEach(word => {
-                    allWords.push({ word, value, valence: 'negative' });
+                negatives.forEach(word => {
+                    balancedWords.push({ word, value, valence: 'negative' });
                 });
             });
-            return allWords.sort(() => Math.random() - 0.5);
-        }
-        
-        function loadPhase1() {
-            testState.currentWords = generateWords();
-            renderWords();
-        }
-        
-        function loadPhase2() {
-            testState.phase = 2;
-            testState.currentWords = generateWords();
             
-            document.getElementById('phaseTitle').textContent = 'Fase 2: Perfil Adaptado';
+            // Embaralhar as 30 palavras
+            return balancedWords.sort(() => Math.random() - 0.5);
+        }
+        
+        function loadBlock1() {
+            testState.currentBlock = 1;
+            
+            // Gerar par de blocos únicos para Fase 1
+            const fase1Blocks = generatePairOfBlocks();
+            testState.block1Words = fase1Blocks.block1;
+            testState.block2Words = fase1Blocks.block2;
+            
+            testState.currentWords = testState.block1Words;
+            
+            updateProgress(1);
+            document.getElementById('phaseTitle').textContent = 'Fase 1: Perfil Natural';
+            document.getElementById('phaseSubtitle').textContent = 'Parte 1 de 2';
             document.getElementById('phaseDescription').innerHTML = 
-                'Agora escolha entre 10 e 20 palavras que melhor descrevem <strong>como você age no ambiente de trabalho</strong>. Pense em como você se comporta profissionalmente.';
+                'Escolha entre <strong>12 e 15 palavras</strong> que melhor descrevem <strong>quem você é naturalmente</strong>, sem pensar no ambiente de trabalho. Seja genuíno.';
+            document.getElementById('selectionRange').textContent = ' / 12-15 palavras selecionadas';
             
-            document.getElementById('selectionCount').textContent = '0';
-            document.getElementById('nextBtn').textContent = 'Ver Resultados';
-            document.getElementById('nextBtn').disabled = true;
-            
-            window.scrollTo(0, 0);
             renderWords();
+        }
+        
+        function loadBlock2() {
+            testState.currentBlock = 2;
+            // Bloco 2 já foi gerado junto com Bloco 1 - só usar
+            testState.currentWords = testState.block2Words;
+            
+            updateProgress(2);
+            document.getElementById('phaseTitle').textContent = 'Fase 1: Perfil Natural';
+            document.getElementById('phaseSubtitle').textContent = 'Parte 2 de 2';
+            document.getElementById('phaseDescription').innerHTML = 
+                'Continue escolhendo entre <strong>12 e 15 palavras</strong> que representam <strong>quem você é naturalmente</strong>. Mantenha a mesma honestidade.';
+            document.getElementById('selectionRange').textContent = ' / 12-15 palavras selecionadas';
+            
+            renderWords();
+        }
+        
+        function loadBlock3() {
+            testState.currentBlock = 3;
+            
+            // Gerar par de blocos únicos para Fase 2
+            const fase2Blocks = generatePairOfBlocks();
+            testState.block3Words = fase2Blocks.block1;
+            testState.block4Words = fase2Blocks.block2;
+            
+            testState.currentWords = testState.block3Words;
+            
+            updateProgress(3);
+            document.getElementById('phaseTitle').textContent = 'Fase 2: Perfil Adaptado';
+            document.getElementById('phaseSubtitle').textContent = 'Parte 1 de 2';
+            document.getElementById('phaseDescription').innerHTML = 
+                'Agora escolha entre <strong>12 e 15 palavras</strong> que melhor descrevem <strong>como você age no ambiente de trabalho</strong>. Pense em como você se comporta profissionalmente.';
+            document.getElementById('selectionRange').textContent = ' / 12-15 palavras selecionadas';
+            
+            renderWords();
+        }
+        
+        function loadBlock4() {
+            testState.currentBlock = 4;
+            // Bloco 4 já foi gerado junto com Bloco 3 - só usar
+            testState.currentWords = testState.block4Words;
+            
+            updateProgress(4);
+            document.getElementById('phaseTitle').textContent = 'Fase 2: Perfil Adaptado';
+            document.getElementById('phaseSubtitle').textContent = 'Parte 2 de 2';
+            document.getElementById('phaseDescription').innerHTML = 
+                'Continue escolhendo entre <strong>12 e 15 palavras</strong> que descrevem <strong>como você age profissionalmente</strong>. Última etapa!';
+            document.getElementById('selectionRange').textContent = ' / 12-15 palavras selecionadas';
+            document.getElementById('nextBtn').textContent = 'Ver Resultados';
+            
+            renderWords();
+        }
+        
+        function updateProgress(blockNumber) {
+            const percentage = (blockNumber / 4) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `Etapa ${blockNumber} de 4`;
+            document.getElementById('selectionCount').textContent = '0';
+            document.getElementById('nextBtn').disabled = true;
+            window.scrollTo(0, 0);
         }
         
         function renderWords() {
@@ -731,16 +907,25 @@
             });
         }
         
+        function getCurrentSelections() {
+            switch(testState.currentBlock) {
+                case 1: return testState.block1Selections;
+                case 2: return testState.block2Selections;
+                case 3: return testState.block3Selections;
+                case 4: return testState.block4Selections;
+            }
+        }
+        
         function toggleWord(index) {
-            const selections = testState.phase === 1 ? testState.phase1Selections : testState.phase2Selections;
+            const selections = getCurrentSelections();
             const wordElement = document.querySelector(`[data-index="${index}"]`);
             
             if (selections.includes(index)) {
                 selections.splice(selections.indexOf(index), 1);
                 wordElement.classList.remove('selected');
             } else {
-                if (selections.length >= 20) {
-                    alert('⚠️ Você já selecionou 20 palavras (máximo permitido)');
+                if (selections.length >= 15) {
+                    alert('⚠️ Você já selecionou 15 palavras (máximo permitido nesta etapa)');
                     return;
                 }
                 selections.push(index);
@@ -751,47 +936,115 @@
         }
         
         function updateSelectionCounter() {
-            const count = testState.phase === 1 ? 
-                testState.phase1Selections.length : 
-                testState.phase2Selections.length;
-            
+            const count = getCurrentSelections().length;
             document.getElementById('selectionCount').textContent = count;
-            document.getElementById('nextBtn').disabled = count < 10 || count > 20;
+            
+            // Mínimo 12, máximo 15
+            document.getElementById('nextBtn').disabled = count < 12 || count > 15;
         }
         
-        function nextPhase() {
-            if (testState.phase === 1) {
-                loadPhase2();
-            } else {
-                calculateResults();
+        function nextBlock() {
+            switch(testState.currentBlock) {
+                case 1:
+                    loadBlock2();
+                    break;
+                case 2:
+                    loadBlock3();
+                    break;
+                case 3:
+                    loadBlock4();
+                    break;
+                case 4:
+                    calculateResults();
+                    break;
             }
         }
         
-        // NOVA FUNÇÃO: Gerar interpretação textual estilo DISC
-        function generateTextualInterpretation(phase1Selections, phase2Selections) {
-            // Pegar palavras mais selecionadas por valor
-            const phase1Words = getTopWordsByValue(phase1Selections, 3); // Top 3 por valor
-            const phase2Words = getTopWordsByValue(phase2Selections, 3);
+        function combineBlockSelections(block1Sels, block2Sels, block1Words, block2Words) {
+            const combined = [];
             
-            // Gerar texto interpretativo
+            block1Sels.forEach(index => {
+                combined.push(block1Words[index]);
+            });
+            
+            block2Sels.forEach(index => {
+                combined.push(block2Words[index]);
+            });
+            
+            return combined;
+        }
+        
+        function calculateInternalConsistency(block1Sels, block2Sels, block1Words, block2Words) {
+            const block1Scores = calculateScoresFromWordList(
+                block1Sels.map(i => block1Words[i])
+            );
+            const block2Scores = calculateScoresFromWordList(
+                block2Sels.map(i => block2Words[i])
+            );
+            
+            const inconsistencias = [];
+            let somaDiferencas = 0;
+            
+            Object.keys(VALUES).forEach(value => {
+                const diff = Math.abs(block1Scores[value] - block2Scores[value]);
+                somaDiferencas += diff;
+                
+                if (diff > 30) {
+                    inconsistencias.push({
+                        valor: value,
+                        diferenca: Math.round(diff)
+                    });
+                }
+            });
+            
+            const mediaInconsistencia = somaDiferencas / 5;
+            
+            return {
+                inconsistencias,
+                mediaInconsistencia: Math.round(mediaInconsistencia),
+                consistente: mediaInconsistencia < 25
+            };
+        }
+        
+        function calculateScoresFromWordList(wordList) {
+            const scores = {};
+            Object.keys(VALUES).forEach(v => scores[v] = 0);
+            
+            wordList.forEach(item => {
+                if (item.valence === 'positive') {
+                    scores[item.value] += 10;
+                } else {
+                    scores[item.value] -= 10;
+                }
+            });
+            
+            Object.keys(scores).forEach(v => {
+                scores[v] = Math.max(0, Math.min(100, 50 + scores[v]));
+            });
+            
+            return scores;
+        }
+        
+        function generateTextualInterpretation(phase1Words, phase2Words) {
+            const phase1WordsList = getTopWordsByValue(phase1Words, 3);
+            const phase2WordsList = getTopWordsByValue(phase2Words, 3);
+            
             let interpretation = {
-                perfilNatural: generatePerfilText(phase1Words, 'natural'),
-                perfilAdaptado: generatePerfilText(phase2Words, 'adaptado'),
+                perfilNatural: generatePerfilText(phase1WordsList, 'natural'),
+                perfilAdaptado: generatePerfilText(phase2WordsList, 'adaptado'),
                 palavrasChave: {
-                    fase1: extractKeywords(phase1Words),
-                    fase2: extractKeywords(phase2Words)
+                    fase1: extractKeywords(phase1WordsList),
+                    fase2: extractKeywords(phase2WordsList)
                 }
             };
             
             return interpretation;
         }
         
-        function getTopWordsByValue(selections, topN = 3) {
+        function getTopWordsByValue(wordsList, topN = 3) {
             const wordsByValue = {};
             
-            // Agrupar palavras por valor
-            selections.forEach(index => {
-                const item = testState.currentWords[index];
+            wordsList.forEach(item => {
                 if (!wordsByValue[item.value]) {
                     wordsByValue[item.value] = [];
                 }
@@ -801,7 +1054,6 @@
                 });
             });
             
-            // Pegar top N palavras de cada valor
             const topWords = {};
             Object.keys(wordsByValue).forEach(value => {
                 topWords[value] = wordsByValue[value].slice(0, topN);
@@ -811,7 +1063,6 @@
         }
         
         function generatePerfilText(wordsByValue, tipo) {
-            // Coletar todas as palavras positivas e negativas
             let todasPositivas = [];
             let todasNegativas = [];
             let valoresFortes = [];
@@ -824,21 +1075,16 @@
                 todasPositivas.push(...posWords);
                 todasNegativas.push(...negWords);
                 
-                // Identificar valores fortes (mais positivas que negativas)
                 if (posWords.length > negWords.length) {
                     valoresFortes.push(value);
-                }
-                // Identificar valores de desafio (mais negativas que positivas)
-                else if (negWords.length > posWords.length) {
+                } else if (negWords.length > posWords.length) {
                     valoresDesafio.push(value);
                 }
             });
             
-            // Limitar a 6 palavras mais relevantes
             todasPositivas = todasPositivas.slice(0, 6);
             todasNegativas = todasNegativas.slice(0, 6);
             
-            // Construir texto resumido
             let texto = '';
             
             if (tipo === 'natural') {
@@ -847,7 +1093,6 @@
                 texto = '💼 PERFIL ADAPTADO (Como age no trabalho):\n\n';
             }
             
-            // Características predominantes
             if (todasPositivas.length > 0) {
                 texto += `✅ Características Fortes: ${todasPositivas.join(', ')}\n\n`;
             }
@@ -856,7 +1101,6 @@
                 texto += `⚠️ Pontos de Atenção: ${todasNegativas.join(', ')}\n\n`;
             }
             
-            // Valores culturais
             if (valoresFortes.length > 0) {
                 texto += `🎯 Valores Alinhados: ${valoresFortes.join(', ')}\n`;
             }
@@ -879,31 +1123,51 @@
         function calculateResults() {
             const totalTime = Math.floor((Date.now() - testState.startTime) / 1000);
             
-            const phase1Scores = calculateScoresByValue(testState.phase1Selections);
-            const phase2Scores = calculateScoresByValue(testState.phase2Selections);
-            
-            const phase1Details = calculateWordPercentages(testState.phase1Selections);
-            const phase2Details = calculateWordPercentages(testState.phase2Selections);
-            
-            // NOVO: Gerar interpretação textual
-            const textualInterpretation = generateTextualInterpretation(
-                testState.phase1Selections,
-                testState.phase2Selections
+            const phase1Words = combineBlockSelections(
+                testState.block1Selections,
+                testState.block2Selections,
+                testState.block1Words,
+                testState.block2Words
             );
             
-            const metricas = calculateValidationMetrics(
-                testState.phase1Selections, 
-                testState.phase2Selections, 
-                totalTime
+            const phase2Words = combineBlockSelections(
+                testState.block3Selections,
+                testState.block4Selections,
+                testState.block3Words,
+                testState.block4Words
             );
+            
+            const fase1Consistencia = calculateInternalConsistency(
+                testState.block1Selections,
+                testState.block2Selections,
+                testState.block1Words,
+                testState.block2Words
+            );
+            
+            const fase2Consistencia = calculateInternalConsistency(
+                testState.block3Selections,
+                testState.block4Selections,
+                testState.block3Words,
+                testState.block4Words
+            );
+            
+            const phase1Scores = calculateScoresFromWordList(phase1Words);
+            const phase2Scores = calculateScoresFromWordList(phase2Words);
+            
+            const phase1Details = calculateWordPercentages(phase1Words);
+            const phase2Details = calculateWordPercentages(phase2Words);
+            
+            const metricas = calculateValidationMetrics(phase1Words, phase2Words, totalTime);
+            
+            // NOVA MÉTRICA: Cobertura de valores
+            const cobertura = calculateValueCoverage(phase1Words, phase2Words);
             
             const aderenciaScore = Math.round(
                 Object.values(phase2Scores).reduce((a, b) => a + b, 0) / 5
             );
             
-            const isReliable = totalTime >= 138;
+            const isReliable = totalTime >= 120;
             
-            // Enviar para Formspree
             sendToFormspree({
                 nome: testState.nome,
                 cpf: testState.cpf,
@@ -913,9 +1177,11 @@
                 phase2Scores,
                 phase1Details,
                 phase2Details,
-                textualInterpretation,  // NOVO
                 metricas,
-                isReliable
+                isReliable,
+                fase1Consistencia,
+                fase2Consistencia,
+                cobertura
             });
             
             displayResults({
@@ -927,47 +1193,109 @@
             });
         }
         
-        function calculateValidationMetrics(phase1Selections, phase2Selections, totalTime) {
-            const allSelections = [...phase1Selections, ...phase2Selections];
+        // NOVA FUNÇÃO: Calcular cobertura de valores
+        function calculateValueCoverage(phase1Words, phase2Words) {
+            const allWords = [...phase1Words, ...phase2Words];
+            const valoresCobertos = new Set();
+            const detalhesCobertura = {};
             
-            // 1. Desejabilidade Social
-            let totalPositivas = 0;
-            let totalNegativas = 0;
-            
-            allSelections.forEach(index => {
-                const item = testState.currentWords[index];
-                if (item.valence === 'positive') totalPositivas++;
-                else totalNegativas++;
+            Object.keys(VALUES).forEach(value => {
+                detalhesCobertura[value] = {
+                    total: 0,
+                    positivas: 0,
+                    negativas: 0
+                };
             });
             
-            const totalPalavras = allSelections.length;
+            allWords.forEach(item => {
+                valoresCobertos.add(item.value);
+                detalhesCobertura[item.value].total++;
+                if (item.valence === 'positive') {
+                    detalhesCobertura[item.value].positivas++;
+                } else {
+                    detalhesCobertura[item.value].negativas++;
+                }
+            });
+            
+            const percentualCobertura = (valoresCobertos.size / 5) * 100;
+            
+            return {
+                valoresCobertos: Array.from(valoresCobertos),
+                percentualCobertura: Math.round(percentualCobertura),
+                coberturaCompleta: valoresCobertos.size === 5,
+                detalhes: detalhesCobertura
+            };
+        }
+        
+        function calculateValidationMetrics(phase1Words, phase2Words, totalTime) {
+            const allWords = [...phase1Words, ...phase2Words];
+            
+            let totalPositivas = 0;
+            let totalNegativas = 0;
+            let phase1Positivas = 0;
+            let phase1Negativas = 0;
+            let phase2Positivas = 0;
+            let phase2Negativas = 0;
+            
+            // Contar por fase
+            phase1Words.forEach(item => {
+                if (item.valence === 'positive') phase1Positivas++;
+                else phase1Negativas++;
+            });
+            
+            phase2Words.forEach(item => {
+                if (item.valence === 'positive') phase2Positivas++;
+                else phase2Negativas++;
+            });
+            
+            totalPositivas = phase1Positivas + phase2Positivas;
+            totalNegativas = phase1Negativas + phase2Negativas;
+            
+            const totalPalavras = allWords.length;
             const desejabilidadeSocial = Math.round((totalPositivas / totalPalavras) * 100);
+            
+            // NOVA LÓGICA CONTEXTUAL
+            const percPhase1Positivas = Math.round((phase1Positivas / phase1Words.length) * 100);
+            const percPhase2Positivas = Math.round((phase2Positivas / phase2Words.length) * 100);
+            const diferencaFases = Math.abs(percPhase2Positivas - percPhase1Positivas);
             
             let desejabilidadeNivel = 'Normal';
             let desejabilidadeAlerta = false;
-            if (desejabilidadeSocial > 85) {
-                desejabilidadeNivel = 'ALTA - Possível manipulação por desejabilidade social';
+            
+            // Alerta apenas em casos suspeitos
+            if (percPhase1Positivas > 85 && percPhase2Positivas > 85) {
+                // Ambas fases muito positivas = suspeito
+                desejabilidadeNivel = 'ALTA - Perfil "perfeito demais" em ambas as fases - Possível manipulação';
+                desejabilidadeAlerta = true;
+            } else if (diferencaFases > 40 && percPhase2Positivas > 90) {
+                // Diferença muito grande + Fase 2 muito positiva = manipulação intencional
+                desejabilidadeNivel = 'ALTA - Mudança drástica entre perfil natural e adaptado - Possível manipulação';
+                desejabilidadeAlerta = true;
+            } else if (percPhase2Positivas === 100 && percPhase1Positivas < 70) {
+                // Fase 2 perfeita mas Fase 1 normal = muito suspeito
+                desejabilidadeNivel = 'ALTA - Perfil adaptado "perfeito" mas perfil natural com limitações - Inconsistente';
                 desejabilidadeAlerta = true;
             } else if (desejabilidadeSocial < 30) {
-                desejabilidadeNivel = 'Baixa';
+                desejabilidadeNivel = 'Baixa - Autocrítica excessiva';
+            } else {
+                // Normal - pessoa se comporta bem no trabalho
+                desejabilidadeNivel = `Normal - Comportamento profissional adequado (Natural: ${percPhase1Positivas}% | Adaptado: ${percPhase2Positivas}%)`;
             }
             
-            // 2. Inconsistências
             const inconsistencias = [];
+            const phase1Scores = calculateScoresFromWordList(phase1Words);
+            const phase2Scores = calculateScoresFromWordList(phase2Words);
+            
             Object.keys(VALUES).forEach(value => {
-                const diff = Math.abs(
-                    calculateScoresByValue(phase1Selections)[value] - 
-                    calculateScoresByValue(phase2Selections)[value]
-                );
+                const diff = Math.abs(phase1Scores[value] - phase2Scores[value]);
                 if (diff > 40) {
                     inconsistencias.push(`${value}: ${diff}% de diferença`);
                 }
             });
             
-            // 3. Respostas Extremas
             let valoresExtremos = 0;
             Object.keys(VALUES).forEach(value => {
-                const details = calculateWordPercentages(phase2Selections)[value];
+                const details = calculateWordPercentages(phase2Words)[value];
                 if (details.porcentagemPositivas === 100 || details.porcentagemNegativas === 100) {
                     valoresExtremos++;
                 }
@@ -981,7 +1309,6 @@
                 extremasAlerta = true;
             }
             
-            // 4. Tempo Total
             const minutos = totalTime / 60;
             let tempoNivel = '';
             let tempoClassificacao = '';
@@ -989,24 +1316,24 @@
             let tempoAcao = '';
             let tempoAlerta = false;
             
-            if (minutos < 2.30) {
+            if (minutos < 2) {
                 tempoNivel = 'MUITO RÁPIDO';
                 tempoClassificacao = '⚠️';
                 tempoInterpretacao = 'Respostas automáticas sem reflexão';
                 tempoAcao = 'REJEITAR ou REAPLICAR teste';
                 tempoAlerta = true;
-            } else if (minutos >= 2.30 && minutos < 4) {
+            } else if (minutos >= 2 && minutos < 3) {
                 tempoNivel = 'RÁPIDO';
                 tempoClassificacao = '⚠️';
                 tempoInterpretacao = 'Possível falta de atenção';
                 tempoAcao = 'Analisar com CAUTELA';
                 tempoAlerta = true;
-            } else if (minutos >= 4 && minutos <= 5) {
+            } else if (minutos >= 3 && minutos <= 6) {
                 tempoNivel = 'IDEAL';
                 tempoClassificacao = '✅';
                 tempoInterpretacao = 'Tempo adequado de reflexão';
                 tempoAcao = 'Resultado CONFIÁVEL';
-            } else if (minutos > 5 && minutos <= 6.30) {
+            } else if (minutos > 6 && minutos <= 8) {
                 tempoNivel = 'LENTO';
                 tempoClassificacao = '⚠️';
                 tempoInterpretacao = 'Pode indicar indecisão';
@@ -1019,8 +1346,7 @@
                 tempoAlerta = true;
             }
             
-            // 5. Variação de Respostas
-            const scoresArray = Object.values(calculateScoresByValue(phase2Selections));
+            const scoresArray = Object.values(phase2Scores);
             const media = scoresArray.reduce((a, b) => a + b, 0) / scoresArray.length;
             const variancia = scoresArray.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / scoresArray.length;
             const desvioPadrao = Math.sqrt(variancia);
@@ -1034,14 +1360,13 @@
                 variacaoNivel = 'Muito variada';
             }
             
-            // Pontos de Atenção
             const pontosAtencao = [];
             
             if (desejabilidadeAlerta) {
                 pontosAtencao.push('🚨 DESEJABILIDADE SOCIAL ALTA - Candidato pode estar tentando "parecer perfeito"');
             }
             if (inconsistencias.length > 0) {
-                pontosAtencao.push(`⚠️ INCONSISTÊNCIAS: ${inconsistencias.join(', ')}`);
+                pontosAtencao.push(`⚠️ INCONSISTÊNCIAS ENTRE FASES: ${inconsistencias.join(', ')}`);
             }
             if (extremasAlerta) {
                 pontosAtencao.push('🚨 RESPOSTAS EXTREMAS - Padrão polarizado pode indicar falta de sinceridade');
@@ -1053,17 +1378,16 @@
                 pontosAtencao.push('🚨 PADRÃO UNIFORME - Respostas muito similares podem indicar desatenção');
             }
             
-            // Recomendação FINAL
             let recomendacao = '';
             const alertasGraves = [desejabilidadeAlerta, extremasAlerta, tempoAlerta, variacaoAlerta].filter(Boolean).length;
             
-            if (minutos < 2.30) {
+            if (minutos < 2) {
                 recomendacao = '🔴 RESULTADO NÃO CONFIÁVEL - REJEITAR ou REAPLICAR teste obrigatoriamente.';
             } else if (alertasGraves >= 3) {
                 recomendacao = '🔴 RESULTADO ALTAMENTE SUSPEITO - Múltiplos indicadores de manipulação. CONSIDERAR REJEIÇÃO.';
             } else if (alertasGraves >= 2) {
                 recomendacao = '🟡 RESULTADO COM RESSALVAS - Analisar com EXTREMA CAUTELA. Entrevista complementar OBRIGATÓRIA.';
-            } else if (minutos >= 4 && minutos <= 5 && pontosAtencao.length === 0) {
+            } else if (minutos >= 3 && minutos <= 6 && pontosAtencao.length === 0) {
                 recomendacao = '🟢 RESULTADO CONFIÁVEL - Tempo ideal e sem alertas. Prosseguir normalmente com análise cultural.';
             } else {
                 recomendacao = '🟡 RESULTADO ACEITÁVEL - Prosseguir com análise, mas considerar entrevista complementar.';
@@ -1103,7 +1427,7 @@
             };
         }
         
-        function calculateWordPercentages(selections) {
+        function calculateWordPercentages(wordsList) {
             const details = {};
             
             Object.keys(VALUES).forEach(value => {
@@ -1114,8 +1438,7 @@
                 };
             });
             
-            selections.forEach(index => {
-                const item = testState.currentWords[index];
+            wordsList.forEach(item => {
                 const value = item.value;
                 const valence = item.valence;
                 
@@ -1142,28 +1465,6 @@
             return details;
         }
         
-        function calculateScoresByValue(selections) {
-            const scores = {};
-            Object.keys(VALUES).forEach(v => scores[v] = 0);
-            
-            selections.forEach(index => {
-                const item = testState.currentWords[index];
-                const valence = item.valence;
-                
-                if (valence === 'positive') {
-                    scores[item.value] += 10;
-                } else {
-                    scores[item.value] -= 10;
-                }
-            });
-            
-            Object.keys(scores).forEach(v => {
-                scores[v] = Math.max(0, Math.min(100, 50 + scores[v]));
-            });
-            
-            return scores;
-        }
-        
         async function sendToFormspree(data) {
             const minutes = Math.floor(data.tempoTotal / 60);
             const seconds = data.tempoTotal % 60;
@@ -1175,84 +1476,53 @@
                 cpf: data.cpf,
                 dataHora: new Date().toLocaleString('pt-BR'),
                 tempoTotal: `${minutes}min ${seconds}s`,
-                
-                // ═══════════════════════════════════════
-                // SCORE GERAL DE ADERÊNCIA CULTURAL
-                // ═══════════════════════════════════════
                 scoreGeral: `${data.aderenciaScore}% - ${nivel}`,
                 classificacao: `${emoji} ${nivel}`,
                 
-                // ═══════════════════════════════════════
-                // CONFIABILIDADE DO RESULTADO
-                // ═══════════════════════════════════════
                 confiabilidade: {
                     nivel: data.isReliable ? '✅ Alta Confiabilidade' : '⚠️ Baixa Confiabilidade',
                     tempoResposta: `${minutes}min ${seconds}s`,
                     status: data.metricas.tempoTotal.classificacao + ' ' + data.metricas.tempoTotal.nivel
                 },
                 
-                // ═══════════════════════════════════════
-                // MÉTRICAS DE VALIDAÇÃO ANTI-MANIPULAÇÃO
-                // ═══════════════════════════════════════
-                // Explicação: Indicadores que ajudam a identificar se o candidato respondeu com sinceridade
+                // NOVA MÉTRICA: Cobertura de Valores
+                
+                consistenciaInterna: {
+                    fase1: {
+                        consistente: data.fase1Consistencia.consistente ? '✅ Consistente' : '⚠️ Inconsistente',
+                        mediaInconsistencia: `${data.fase1Consistencia.mediaInconsistencia}%`,
+                        detalhes: data.fase1Consistencia.inconsistencias.length > 0 
+                            ? data.fase1Consistencia.inconsistencias.map(i => `${i.valor}: ${i.diferenca}%`).join(', ')
+                            : 'Nenhuma inconsistência detectada'
+                    },
+                    fase2: {
+                        consistente: data.fase2Consistencia.consistente ? '✅ Consistente' : '⚠️ Inconsistente',
+                        mediaInconsistencia: `${data.fase2Consistencia.mediaInconsistencia}%`,
+                        detalhes: data.fase2Consistencia.inconsistencias.length > 0 
+                            ? data.fase2Consistencia.inconsistencias.map(i => `${i.valor}: ${i.diferenca}%`).join(', ')
+                            : 'Nenhuma inconsistência detectada'
+                    },
+                    explicacao: 'Verifica se as respostas nas 2 partes de cada fase foram coerentes entre si'
+                },
                 
                 metricas: {
-                    // 1. DESEJABILIDADE SOCIAL
-                    // O que é: Tendência de escolher apenas respostas "socialmente aceitáveis" para parecer perfeito
-                    // Como funciona: Mede % de palavras POSITIVAS vs NEGATIVAS escolhidas
-                    // Ideal: 50-85% de palavras positivas (equilíbrio entre autoconfiança e autocrítica)
-                    // Alerta: Acima de 85% = possível manipulação (pessoa quer "parecer perfeita")
                     desejabilidadeSocial: `${data.metricas.desejabilidadeSocial.percentual} - ${data.metricas.desejabilidadeSocial.nivel}`,
                     desejabilidadeExplicacao: 'Mede se o candidato escolheu apenas palavras positivas para "parecer perfeito"',
-                    
-                    // 2. INCONSISTÊNCIAS ENTRE RESPOSTAS
-                    // O que é: Contradições entre o que a pessoa disse ser (Fase 1) e como age (Fase 2)
-                    // Como funciona: Compara diferenças grandes (>40%) nos mesmos valores entre as duas fases
-                    // Ideal: Diferenças menores que 40% (coerência entre ser e agir)
-                    // Alerta: Diferenças acima de 40% = possível falta de sinceridade ou autoconhecimento
                     inconsistencias: `${data.metricas.inconsistencias.quantidade} inconsistências - ${data.metricas.inconsistencias.detalhes}`,
                     inconsistenciasExplicacao: 'Verifica contradições entre como a pessoa se vê (Fase 1) e como age (Fase 2)',
-                    
-                    // 3. RESPOSTAS EXTREMAS (Polarização)
-                    // O que é: Escolher APENAS palavras muito positivas OU muito negativas para um valor
-                    // Como funciona: Conta quantos valores tiveram 100% de um tipo de palavra
-                    // Ideal: 0-40% de valores extremos (pessoa demonstra nuances)
-                    // Alerta: Acima de 60% = pensamento polarizado "tudo ou nada" ou falta de reflexão
                     respostasExtremas: `${data.metricas.respostasExtremas.percentual} - ${data.metricas.respostasExtremas.nivel}`,
                     extremasExplicacao: 'Identifica se o candidato pensou de forma polarizada (tudo ou nada) sem nuances',
-                    
-                    // 4. TEMPO DE RESPOSTA
-                    // O que é: Tempo total para completar o teste
-                    // Como funciona: Mede se a pessoa refletiu adequadamente sobre cada palavra
-                    // Ideal: 4-5 minutos (tempo de reflexão adequado)
-                    // Alerta: Menos de 2:30min = respostas automáticas | Mais de 6:30min = indecisão excessiva
                     tempoTotal: `${data.metricas.tempoTotal.minutos}min - ${data.metricas.tempoTotal.classificacao} ${data.metricas.tempoTotal.nivel}`,
                     tempoInterpretacao: data.metricas.tempoTotal.interpretacao,
                     tempoAcao: data.metricas.tempoTotal.acao,
                     tempoExplicacao: 'Avalia se houve tempo suficiente para reflexão genuína (muito rápido = automático)',
-                    
-                    // 5. VARIAÇÃO DE RESPOSTAS
-                    // O que é: Diversidade nas respostas entre os 5 valores culturais
-                    // Como funciona: Calcula desvio padrão dos scores (se são muito parecidos ou variados)
-                    // Ideal: Desvio entre 5-30 (mostra que a pessoa tem perfil único, não genérico)
-                    // Alerta: Desvio menor que 5 = respostas muito uniformes (possível desatenção)
                     variacaoRespostas: `Desvio padrão: ${data.metricas.variacaoRespostas.desvioPadrao} - ${data.metricas.variacaoRespostas.nivel}`,
                     variacaoExplicacao: 'Verifica se há diversidade nas respostas ou padrão automático muito uniforme'
                 },
                 
-                // ═══════════════════════════════════════
-                // PONTOS DE ATENÇÃO E ALERTAS
-                // ═══════════════════════════════════════
                 pontosAtencao: data.metricas.pontosAtencao,
-                
-                // ═══════════════════════════════════════
-                // RECOMENDAÇÃO FINAL DO SISTEMA
-                // ═══════════════════════════════════════
                 recomendacao: data.metricas.recomendacao,
                 
-                // ═══════════════════════════════════════
-                // ALERTAS DE MANIPULAÇÃO (Resumo Visual)
-                // ═══════════════════════════════════════
                 alertasManipulacao: {
                     nivelRisco: data.metricas.alertasGraves >= 3 ? '🔴 ALTO RISCO' : 
                                data.metricas.alertasGraves >= 2 ? '🟡 RISCO MODERADO' : '🟢 BAIXO RISCO',
@@ -1260,22 +1530,13 @@
                     desejabilidadeSocial: data.metricas.desejabilidadeSocial.alerta ? '🚨 ALERTA' : '✅ OK',
                     respostasExtremas: data.metricas.respostasExtremas.alerta ? '🚨 ALERTA' : '✅ OK',
                     tempo: data.metricas.tempoTotal.alerta ? '🚨 ALERTA' : '✅ OK',
-                    padraoUniforme: data.metricas.variacaoRespostas.alerta ? '🚨 ALERTA' : '✅ OK'
+                    padraoUniforme: data.metricas.variacaoRespostas.alerta ? '🚨 ALERTA' : '✅ OK',
+                    consistenciaFase1: !data.fase1Consistencia.consistente ? '🚨 ALERTA' : '✅ OK',
+                    consistenciaFase2: !data.fase2Consistencia.consistente ? '🚨 ALERTA' : '✅ OK'
                 },
                 
-                // ═══════════════════════════════════════
-                // INTERPRETAÇÃO TEXTUAL (Estilo DISC)
-                // ═══════════════════════════════════════
-                interpretacaoTextual: {
-                    perfilNatural: data.textualInterpretation.perfilNatural,
-                    perfilAdaptado: data.textualInterpretation.perfilAdaptado,
-                    palavrasChaveFase1: data.textualInterpretation.palavrasChave.fase1,
-                    palavrasChaveFase2: data.textualInterpretation.palavrasChave.fase2
-                },
+                // Interpretação removida - apenas porcentagens serão enviadas
                 
-                // ═══════════════════════════════════════
-                // PERFIL NATURAL (FASE 1)
-                // ═══════════════════════════════════════
                 perfilNatural: {
                     comprometimento: {
                         score: `${data.phase1Scores['Comprometimento']}%`,
@@ -1304,9 +1565,6 @@
                     }
                 },
                 
-                // ═══════════════════════════════════════
-                // PERFIL ADAPTADO (FASE 2)
-                // ═══════════════════════════════════════
                 perfilAdaptado: {
                     comprometimento: {
                         score: `${data.phase2Scores['Comprometimento']}%`,
@@ -1365,7 +1623,7 @@
             return { nivel: 'Associação Negativa', emoji: '⚫' };
         }
         
-        console.log('Sistema Brasil Infra carregado - Versão com Interpretação Textual e Anti-Manipulação!');
+        console.log('Sistema Brasil Infra - Versão FINAL Anti-Manipulação com 30 palavras balanceadas!');
     </script>
 </body>
 </html>
